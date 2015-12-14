@@ -27,7 +27,7 @@ data$flag.np <- data$Provider.Type == "CIS Staff" & is.na(data$Provider.Name)
 nosupport <- data[is.na(data$Student.Support.Name), ]
 data$flag.ns <- is.na(data$Student.Support.Name) # flag original data set
 
-#********************** INDIVIDUAL HOURS ENTERED THROUGH BATCH *******************
+#flag individual hours entered through batch entry####
 # Create dataset for same notes same hours on same day individual entry (ie- batch entry individual service)
 indiv <- data[data$Recorded.As == "Individual", ]
 attach(indiv)
@@ -40,19 +40,18 @@ indivbatchsum <- indivbatchsum[indivbatchsum$numstudents > 1, ]
 detach(indiv)
 
 attach(data)
-#******** Quick fix, need to edit this later, this misses (doesn't flag) one observation for every batch entry
+#Quick fix, need to edit this later, this misses (doesn't flag) one observation for every batch entry
 data$flag.ib <- Recorded.As == "Individual" & duplicated(cbind(Notes, Provider.Name, Begin.Date, End.Date)) # flag original dataset
 detach(data)
 
-#*****************   BAD DATES (BEGIN / END NOT THE SAME) **************
+# flag entries with different begin/end dates #####
 # create dummy for start/end dates not the same
 data$flag.bd <- data$Begin.Date != data$End.Date # flag original dataset
 baddates <- data[data$flag.bd, ]
 byentry <- data %>% group_by(Provider.Name, Begin.Date, End.Date, flag.bd, Recorded.As, Notes) %>% summarize(Hours = sum(Hours), number_entries = n() )
 baddatesum <- byentry[byentry$flag.bd == TRUE, ]
 
-
-# ********************  TOO MANY INDIVIDUAL HOURS IN ONE PROVIDER/DAY COMBO *********************
+# flag entries with too many individual hours for one provider on one day#####
 # sum all individual / group hours in a given day
 # Note: in 14-15 datasets "Provider" is called "Service.Provider" and must be changed below in group_by
 bydays <- data %>% group_by(Provider.Name, Home.School, Begin.Date, End.Date, flag.bd, Recorded.As) %>% summarize(Hours = sum(Hours), baddate = sum(flag.bd))
@@ -63,9 +62,7 @@ toomanyhours <- data[alply(data[ ,c("Provider.Name", "Home.School", "Begin.Date"
 toomanyhourssum <- bydays[bydays$Hours > 10 & bydays$Recorded.As == "Individual", ]
 data$flag.tmh <- alply(data[ ,c("Provider.Name", "Begin.Date", "End.Date")], 1) %in% alply(toomanydate, 1) # flag original dataset
 
-
-
-#******************* HOURS SPENT SERVING AND GROUPSIZES ******************************************
+#Creating groupsize, hoursspent, individual, group, etc. ####
 d <- data %>% group_by(Home.School, Begin.Date, End.Date, Provider.Type, Provider.Name, Recorded.As, Student.Support.Category, 
                        Hours, Tier, Notes) %>% summarize(groupsize = n())
 data <- merge(data, d, by = c("Home.School", "Begin.Date", "End.Date", "Provider.Type", "Provider.Name", "Recorded.As", "Student.Support.Category", 
@@ -76,8 +73,7 @@ data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Individual", ]$individual
 data$group <- 0
 data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$group = data[ (!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$Hours
 
-
-#****************************** Save and Reloading datasets to fix data class issues that I don't fully understand *****************
+# Save and Reloading datasets to fix data class issues that I don't fully understand ********####
 write.csv(baddates, "baddate.csv")
 baddates <- read.csv("baddate.csv")
 
@@ -96,7 +92,7 @@ file.copy(from=movefiles, to=oldfiles,
         copy.mode = TRUE)
 file.remove(movefiles, recursive = FALSE)
 
-# write datasets of problem issues for all schools to an excel spreadsheet 
+# write datasets of problem issues for all schools to an excel spreadsheet ####
 setwd("~/Dropbox/Data Checks")
 SERV<-loadWorkbook (paste("Data Check ", as.character(Sys.Date()),".xlsx") , create = TRUE )
 createSheet ( SERV, "No Service Provider")
@@ -290,9 +286,10 @@ unlink("ServiceD1516CL.csv", recursive = FALSE, force = FALSE)
 write.csv(data, "ServiceD1516CL.csv")
 
 
-##################################       OUTCOME DATA       ###############################
 
-### Every student has every outcome entered
+##################################      OUTCOME DATA CHECK      ###############################
+
+
 
 setwd("~/Dropbox/CIS Data")
 
@@ -304,12 +301,10 @@ attend <- attend[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","R
 risk <- readWorksheetFromFile('TQS1516.xls', sheet=1, header=T, startRow = 3)
 risk <- risk[, c("Case.ID", "X..Goals", "X..Risk.Factors")]
 
-#***********************
-#attend <- attend[attend$Report.Period == "1st Grading Period", ]
+
 attend <- attend[attend$Outcome.Item %in% c("Unexcused Absence", "Excused Absence", "ISS", "OSS"), ]
 
-########### This is code to flag entries that have duplicated student, report period, outcome item (so a student has 2 entries for the same outcome in the same quarter- like 2 attendance measures)
-attend1 <- attend
+# flag entries that have duplicated student, report period, outcome item #####
 attend1$dup <- duplicated(attend1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
 attend1 <- attend1[order(!attend1$dup), ]
 attend1$dup2 <- duplicated(attend1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
@@ -318,14 +313,14 @@ write.csv(attend1, "attendance_duplicates.csv")
 ############### Above csv is for you and/or Sheri to check on duplicates with the GC's
 attend <- attend[!duplicated(attend[,c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")]), ] # This is a soft option that just deletes one of the duplicates
 attend <- spread(attend, Outcome.Item, Value)
-attend <- attend[, c("Case.ID", "Excused Absence", "Unexcused Absence", "ISS", "OSS")] #
+attend <- attend[, c("Case.ID", "Excused Absence", "Unexcused Absence", "ISS", "OSS")] 
 
 grades <-  readWorksheetFromFile('Grades1516.xls', sheet=1, header = T, startRow = 5)
 
 grades <- grades[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period", "Value")]
 
 grades<- grades[ grades$Report.Period %in% c("1st Grading Period", "Baseline"), ]
-########### This is code to flag entries that have duplicated student, report period, outcome item (so a student has 2 entries for the same outcome in the same quarter- like 2 attendance measures)
+########### flag entries that have duplicated student, report period, outcome item
 grades1 <- grades
 grades1$dup <- duplicated(grades1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
 grades1 <- grades1[order(!grades1$dup), ]
@@ -334,6 +329,8 @@ grades1 <- grades1[grades1$dup | grades1$dup2, ]
 write.csv(grades1, "grades_duplicates.csv")
 ############### Above csv is for you and/or Sheri to check on duplicates with the GC's
 
+
+#Merging grades and attendance, and aggregate service info to stlist #####
 grades <- spread(grades, Outcome.Item, Value)
 grades <- grades[, c("Case.ID", "Lang. Arts","Math", "Other", "Reading", "Science", "Writing")]
 stlist <- merge(cs, attend, by = "Case.ID", all = T)
@@ -352,7 +349,8 @@ stserv <- data %>% group_by(Student.ID) %>% summarize(Hours = sum(Hours), HoursS
 colnames(stserv)[1] <- "Case.ID"
 
 stlist <- merge(stlist, stserv, by = "Case.ID", all = T)
-  
+
+#Students with NA for Hours are students present on caseload and not present in our service data 
 stlist[is.na(stlist$Hours), ]$Hours <- 0
 stlist[is.na(stlist$HoursSpent), ]$HoursSpent <- 0
 stlist[is.na(stlist$individual), ]$individual <- 0
@@ -361,7 +359,7 @@ stlist[is.na(stlist$group), ]$group <- 0
 
 stlist <- stlist[!is.na(stlist$Name), ]
 
-#This section creates a new variable, criteria, which calculates the number of eligibility criteria a student meets.
+#This section creates a new variable, criteria, which calculates the number of eligibility criteria a student meets. #####
 elem <- c("Glenn Elementary School", "Eno Valley Elementary", "EK Powe Elementary School", "YE Smith Elementary")
 high <- c("Neal Middle School", "Durham Performance Learning Center", "Hillside High School", "Southern High School", "Northern")
 
@@ -380,11 +378,8 @@ stlist$criteria <-  ifelse(is.element(stlist$Site, high) & stlist$criteria != 1 
 stlist$criteria <- ifelse(stlist$suspended == FALSE | is.na(stlist$suspended), stlist$criteria, stlist$criteria + 1)
 stlist$criteria <- ifelse(stlist$totabs < 4 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
 
+#Write studentlist to the working directory ####
 unlink("studentlist.csv", recursive = FALSE, force = FALSE)
 
 write.csv(stlist, "studentlist.csv")
 
-#test
-
-
-#Corey test
