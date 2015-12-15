@@ -73,6 +73,26 @@ data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Individual", ]$individual
 data$group <- 0
 data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$group = data[ (!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$Hours
 
+#Flag entries that have Recorded.As unmatched with Tier, Tier/Recorded.As unmatched with groupsize####
+data$Recorded.As[data$Tier == "Tier I"] <- "Tier I"
+data$flag.tier2indiv <- FALSE
+data$flag.tier2indiv[data$Recorded.As == "Individual" & data$Tier == "Tier II" ] <- TRUE
+data$flag.tier3group <- FALSE
+data$flag.tier3group[data$Recorded.As == "Group Setting" & data$Tier == "Tier III"] <- TRUE
+#setting is the service setting where there isn't contradiction between Tier and Recorded.As
+data$setting <- NA
+data$setting[data$Recorded.As == "Group Setting" & data$Tier == "Tier II" ] <- "Group Setting"
+data$setting[data$Recorded.As == "Individual" & data$Tier == "Tier III" ] <- "Individual"
+data$setting[data$Recorded.As == "Tier I"] <- "Tier I"
+# Now create a column that checks that our groupsizes match with unambiguous group settings
+data$flag.groupsize <- FALSE
+data$flag.groupsize[(!is.na(data$setting)) & data$groupsize > 1 & data$setting == "Individual"] <- TRUE
+data$flag.groupsize[(!is.na(data$setting)) & data$groupsize == 1 & data$setting == "Group Setting"] <- TRUE
+data$flag.groupsize[(!is.na(data$setting)) & data$groupsize == 1 & data$setting == "Group Setting"] <- TRUE
+
+badsetting <- data[data$flag.tier3group | data$flag.tier2indiv, ]
+badgroupsize <- data[data$flag.groupsize, ]
+
 # Save and Reloading datasets to fix data class issues that I don't fully understand ********####
 write.csv(baddates, "baddate.csv")
 baddates <- read.csv("baddate.csv")
