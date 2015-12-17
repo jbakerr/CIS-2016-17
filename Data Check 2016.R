@@ -412,7 +412,6 @@ anyfamcounts <- data[data$anyfamily != 0, ] %>% group_by(Student.ID) %>% summari
 stserv <- merge(stserv, checkcounts, by = "Student.ID", all = T)
 stserv <- merge(stserv, parentcounts, by = "Student.ID", all = T)
 stserv <- merge(stserv, anyfamcounts, by = "Student.ID", all = T)
-stserv[is.na(stserv)] <- 0
 colnames(stserv)[1] <- "Case.ID"
 
 stlist <- merge(stlist, stserv, by = "Case.ID", all = T)
@@ -422,6 +421,7 @@ stlist[is.na(stlist$Hours), ]$Hours <- 0
 stlist[is.na(stlist$HoursSpent), ]$HoursSpent <- 0
 stlist[is.na(stlist$individual), ]$individual <- 0
 stlist[is.na(stlist$group), ]$group <- 0
+stlist[, c("tier1", "checkin", "parent1on1", "anyfamily", "num_serv", "num_check", "num_parent1on1", "num_anyfamily")][is.na(stlist[, c("tier1", "checkin", "parent1on1", "anyfamily", "num_serv", "num_check", "num_parent1on1", "num_anyfamily")])] <- 0
 
 
 stlist <- stlist[!is.na(stlist$Name), ]
