@@ -62,18 +62,7 @@ toomanyhours <- data[alply(data[ ,c("Provider.Name", "Home.School", "Begin.Date"
 toomanyhourssum <- bydays[bydays$Hours > 10 & bydays$Recorded.As == "Individual", ]
 data$flag.tmh <- alply(data[ ,c("Provider.Name", "Begin.Date", "End.Date")], 1) %in% alply(toomanydate, 1) # flag original dataset
 
-#Creating groupsize, hoursspent, individual, group, etc. ####
-d <- data %>% group_by(Home.School, Begin.Date, End.Date, Provider.Type, Provider.Name, Recorded.As, Student.Support.Category, 
-                       Hours, Tier, Notes) %>% summarize(groupsize = n())
-data <- merge(data, d, by = c("Home.School", "Begin.Date", "End.Date", "Provider.Type", "Provider.Name", "Recorded.As", "Student.Support.Category", 
-                              "Hours", "Tier", "Notes"))
-data$hoursspent <- data$Hours/data$groupsize
-data$individual <-  0
-data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Individual", ]$individual = data[ (!is.na(data$Recorded.As)) & data$Recorded.As == "Individual", ]$Hours
-data$group <- 0
-data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$group = data[ (!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$Hours
-
-#Flag entries that have Recorded.As unmatched with Tier, Tier/Recorded.As unmatched with groupsize####
+#Flag entries that have Recorded.As unmatched with Tier####
 data$Recorded.As[data$Tier == "Tier I"] <- "Tier I"
 data$flag.tier2indiv <- FALSE
 data$flag.tier2indiv[data$Recorded.As == "Individual" & data$Tier == "Tier II" ] <- TRUE
@@ -84,16 +73,45 @@ data$setting <- NA
 data$setting[data$Recorded.As == "Group Setting" & data$Tier == "Tier II" ] <- "Group Setting"
 data$setting[data$Recorded.As == "Individual" & data$Tier == "Tier III" ] <- "Individual"
 data$setting[data$Recorded.As == "Tier I"] <- "Tier I"
+
+badsetting <- data[data$flag.tier3group | data$flag.tier2indiv, ]
+
+#Creating groupsize, hoursspent, individual, group, check-ins, parent contacts  etc. ####
+d <- data %>% group_by(Home.School, Begin.Date, End.Date, Provider.Type, Provider.Name, setting, Student.Support.Category, 
+                       Hours, Tier, Notes) %>% summarize(groupsize = n())
+d$groupsize[(!is.na(d$setting)) & d$setting == "Individual"] <- 1
+
+data <- merge(data, d, by = c("Home.School", "Begin.Date", "End.Date", "Provider.Type", "Provider.Name", "setting", "Student.Support.Category", 
+                              "Hours", "Tier", "Notes"))
+data$hoursspent <- data$Hours/data$groupsize
+#Creating individual, group, checkin, 1on1parent, anyfamily variables
+data$individual <-  0
+data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Individual", ]$individual <- data[ (!is.na(data$Recorded.As)) & data$Recorded.As == "Individual", ]$Hours
+data$group <- 0
+data[(!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$group <- data[ (!is.na(data$Recorded.As)) & data$Recorded.As == "Group Setting", ]$Hours
+data$tier1 <- 0
+data$tier1[(!is.na(data$Recorded.As)) & data$Recorded.As == "Tier I"] <- data[ (!is.na(data$Recorded.As)) & data$Recorded.As == "Tier I", ]$Hours
+
+checks <- c("Student Goal Setting/ Check-in Meeting", "Check and Connect", "Case Consultation")
+parent <- c("Home Visit/Parent/Care Giver Contact", "Parent Contact/Conference", "Parent Phone Call")
+anyfamily <- c("Home Visit/Parent/Care Giver Contact", "Parent Contact/Conference", "Parent Phone Call", "Family Focused Event")
+
+data$checkin <- 0
+data$checkin[data$Student.Support.Name %in% checks] <- data$Hours[data$Student.Support.Name %in% checks]
+data$parent1on1 <- 0
+data$parent1on1[data$Student.Support.Name %in% parent] <- data$Hours[data$Student.Support.Name %in% parent]
+data$anyfamily <- 0
+data$anyfamily[data$Student.Support.Name %in% anyfamily] <- data$Hours[data$Student.Support.Name %in% anyfamily]
+
 # Now create a column that checks that our groupsizes match with unambiguous group settings
 data$flag.groupsize <- FALSE
 data$flag.groupsize[(!is.na(data$setting)) & data$groupsize > 1 & data$setting == "Individual"] <- TRUE
 data$flag.groupsize[(!is.na(data$setting)) & data$groupsize == 1 & data$setting == "Group Setting"] <- TRUE
 data$flag.groupsize[(!is.na(data$setting)) & data$groupsize == 1 & data$setting == "Group Setting"] <- TRUE
 
-badsetting <- data[data$flag.tier3group | data$flag.tier2indiv, ]
 badgroupsize <- data[data$flag.groupsize, ]
 
-# Save and Reloading datasets to fix data class issues that I don't fully understand ********####
+# Save and Reloading datasets to fix data class issues, Dropbox File Management********####
 write.csv(baddates, "baddate.csv")
 baddates <- read.csv("baddate.csv")
 
@@ -105,6 +123,7 @@ indivbatchsum <- read.csv("indivbatchsum.csv")
 
 setwd("~/Dropbox/Data Checks")
 
+# File management within dropbox
 oldfiles <- c("~/Dropbox/Data Checks/Old")
 movefiles <- list.files(path = "~/Dropbox/Data Checks/", pattern =".xlsx", all.files = FALSE, recursive = FALSE, include.dirs = FALSE)
 file.copy(from=movefiles, to=oldfiles, 
@@ -129,7 +148,10 @@ createSheet ( SERV, "Too many ind. hours full" )
 writeWorksheet(SERV,toomanyhours,"Too many ind. hours full")
 createSheet(SERV, "Diff. Begin-End Dates Sum")
 writeWorksheet(SERV, baddates, "Diff. Begin-End Dates Sum")
+createSheet(SERV, "Setting - Tier Mismatches")
+writeWorksheet(SERV, badsetting, "Setting - Tier Mismatches" )
 saveWorkbook(SERV)
+
 
 #write data set of hillside's errors
 hillside<-loadWorkbook (paste("Hillside Data Check", as.character(Sys.Date()),".xlsx"), create = TRUE)
@@ -147,6 +169,8 @@ createSheet(hillside, "Too many ind. hours full")
 writeWorksheet(hillside, subset(toomanyhours, Home.School == "Hillside High School"), "Too many ind. hours full")
 createSheet(hillside, "Diff. Begin-End Dates Sum")
 writeWorksheet(hillside, subset(baddates, Home.School == "Hillside High School"), "Diff. Begin-End Dates Sum")
+createSheet(hillside, "Setting - Tier Mismatches")
+writeWorksheet(hillside, subset(badsetting, Home.School == "Hilside High School"), "Setting - Tier Mismatches" )
 saveWorkbook(hillside)
 
 #write data set of plc's errors
@@ -165,6 +189,8 @@ createSheet(plc, "Too many ind. hours full")
 writeWorksheet(plc, subset(toomanyhours, Home.School == "Durham Performance Learning Center"), "Too many ind. hours full")
 createSheet(plc, "Diff. Begin-End Dates Sum")
 writeWorksheet(plc, subset(baddates, Home.School == "Durham Performance Learning Center"), "Diff. Begin-End Dates Sum")
+createSheet(plc, "Setting - Tier Mismatches")
+writeWorksheet(plc, subset(badsetting, Home.School == "Durham Performance Learning Center"), "Setting - Tier Mismatches" )
 saveWorkbook(plc)
 
 #write data set of Eno's errors
@@ -181,8 +207,8 @@ createSheet(eno, "Too many ind. hours sum")
 writeWorksheet(eno, subset(toomanyhourssum, Home.School == "Eno Valley Elementary"), "Too many ind. hours sum")
 createSheet(eno, "Too many ind. hours full")
 writeWorksheet(eno, subset(toomanyhours, Home.School == "Eno Valley Elementary"), "Too many ind. hours full")
-createSheet(eno, "Diff. Begin-End Dates Sum")
-writeWorksheet(eno, subset(baddates, Home.School == "Eno Valley Elementary"), "Diff. Begin-End Dates Sum")
+createSheet(eno, "Setting - Tier Mismatches")
+writeWorksheet(eno, subset(badsetting, Home.School == "Eno Valley Elementary"), "Setting - Tier Mismatches" )
 saveWorkbook(eno)
 
 #write data set of YE Smith's errors
@@ -201,6 +227,8 @@ createSheet(ye, "Too many ind. hours full")
 writeWorksheet(ye, subset(toomanyhours, Home.School == "YE Smith Elementary"), "Too many ind. hours full")
 createSheet(ye, "Diff. Begin-End Dates Sum")
 writeWorksheet(ye, subset(baddates, Home.School == "YE Smith Elementary"), "Diff. Begin-End Dates Sum")
+createSheet(ye, "Setting - Tier Mismatches")
+writeWorksheet(ye, subset(badsetting, Home.School == "YE Smith Elementary"), "Setting - Tier Mismatches" )
 saveWorkbook(ye)
 
 
@@ -220,6 +248,8 @@ createSheet(ek, "Too many ind. hours full")
 writeWorksheet(ek, subset(toomanyhours, Home.School == "EK Powe Elementary School"), "Too many ind. hours full")
 createSheet(ek, "Diff. Begin-End Dates Sum")
 writeWorksheet(ek, subset(baddates, Home.School == "EK Powe Elementary School"), "Diff. Begin-End Dates Sum")
+createSheet(ek, "Setting - Tier Mismatches")
+writeWorksheet(ek, subset(badsetting, Home.School == "EK Powe Elementary School"), "Setting - Tier Mismatches" )
 saveWorkbook(ek)
 
 #write data set of Glenn's errors
@@ -238,6 +268,8 @@ createSheet(glenn, "Too many ind. hours full")
 writeWorksheet(glenn, subset(toomanyhours, Home.School == "Glenn Elementary School"), "Too many ind. hours full")
 createSheet(glenn, "Diff. Begin-End Dates Sum")
 writeWorksheet(glenn, subset(baddates, Home.School == "Glenn Elementary School"), "Diff. Begin-End Dates Sum")
+createSheet(glenn, "Setting - Tier Mismatches")
+writeWorksheet(glenn, subset(badsetting, Home.School == "Glenn Elementary School"), "Setting - Tier Mismatches" )
 saveWorkbook(glenn)
 
 #write data set of Northern's errors
@@ -256,6 +288,8 @@ createSheet(northern, "Too many ind. hours full")
 writeWorksheet(northern, subset(toomanyhours, Home.School == "Northern"), "Too many ind. hours full")
 createSheet(northern, "Diff. Begin-End Dates Sum")
 writeWorksheet(northern, subset(baddates, Home.School == "Northern"), "Diff. Begin-End Dates Sum")
+createSheet(northern, "Setting - Tier Mismatches")
+writeWorksheet(northern, subset(badsetting, Home.School == "Northern"), "Setting - Tier Mismatches" )
 saveWorkbook(northern)
 
 #write data set of Southern's errors
@@ -274,6 +308,8 @@ createSheet(southern, "Too many ind. hours full")
 writeWorksheet(southern, subset(toomanyhours, Home.School == "Southern High School"), "Too many ind. hours full")
 createSheet(southern, "Diff. Begin-End Dates Sum")
 writeWorksheet(southern, subset(baddates, Home.School == "Southern High School"), "Diff. Begin-End Dates Sum")
+createSheet(southern, "Setting - Tier Mismatches")
+writeWorksheet(southern, subset(badsetting, Home.School == "Southern High School"), "Setting - Tier Mismatches" )
 saveWorkbook(southern)
 
 #write data set of Neal's errors
@@ -292,19 +328,20 @@ createSheet(neal, "Too many ind. hours full")
 writeWorksheet(neal, subset(toomanyhours, Home.School == "Neal Middle School"), "Too many ind. hours full")
 createSheet(neal, "Diff. Begin-End Dates Sum")
 writeWorksheet(neal, subset(baddates, Home.School == "Neal Middle School"), "Diff. Begin-End Dates Sum")
+createSheet(neal, "Setting - Tier Mismatches")
+writeWorksheet(neal, subset(badsetting, Home.School == "Neal Middle School"), "Setting - Tier Mismatches" )
 saveWorkbook(neal)
 
 
-# Write the flaged data
+# Write the cleaned / flagged data ####
 attach(data)
-data$flagged <- flag.np | flag.ns | flag.ib | flag.bd | flag.tmh
+data$flagged <- flag.np | flag.ns | flag.ib | flag.bd | flag.tmh | flag.tier2indiv | flag.tier3group
 detach(data)
 
 setwd("~/Dropbox/CIS Data")
 
 unlink("ServiceD1516CL.csv", recursive = FALSE, force = FALSE)
 write.csv(data, "ServiceD1516CL.csv")
-
 
 
 ##################################      OUTCOME DATA CHECK      ###############################
@@ -325,6 +362,7 @@ risk <- risk[, c("Case.ID", "X..Goals", "X..Risk.Factors")]
 attend <- attend[attend$Outcome.Item %in% c("Unexcused Absence", "Excused Absence", "ISS", "OSS"), ]
 
 # flag entries that have duplicated student, report period, outcome item #####
+attend1 <- attend
 attend1$dup <- duplicated(attend1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
 attend1 <- attend1[order(!attend1$dup), ]
 attend1$dup2 <- duplicated(attend1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
@@ -349,8 +387,7 @@ grades1 <- grades1[grades1$dup | grades1$dup2, ]
 write.csv(grades1, "grades_duplicates.csv")
 ############### Above csv is for you and/or Sheri to check on duplicates with the GC's
 
-
-#Merging grades and attendance, and aggregate service info to stlist #####
+#Merging grades and attendance, and aggregate service info into stlist #####
 grades <- spread(grades, Outcome.Item, Value)
 grades <- grades[, c("Case.ID", "Lang. Arts","Math", "Other", "Reading", "Science", "Writing")]
 stlist <- merge(cs, attend, by = "Case.ID", all = T)
@@ -365,7 +402,17 @@ stlist$noabs <- is.na(stlist$"Excused Absence") & is.na(stlist$"Unexcused Absenc
 stlist[stlist$noabs, ]$totabs<- NA 
 
 stlist$suspended <- (is.na(stlist$ISS) & stlist$OSS > 0)|(is.na(stlist$OSS) & stlist$ISS > 0)|(stlist$ISS > 0 | stlist$OSS > 0)
-stserv <- data %>% group_by(Student.ID) %>% summarize(Hours = sum(Hours), HoursSpent = sum(hoursspent), individual = sum(individual), group = sum(group), num_serv = length(Student.ID) )
+
+# Adding service aggregates to student list
+stserv <- data %>% group_by(Student.ID) %>% summarize(Hours = sum(Hours), HoursSpent = sum(hoursspent), individual = sum(individual), group = sum(group), tier1 = sum(tier1), 
+                                                      checkin = sum(checkin), parent1on1 = sum(parent1on1), anyfamily = sum(anyfamily), num_serv = length(Student.ID) )
+checkcounts <- data[data$checkin != 0 , ] %>% group_by(Student.ID) %>% summarize(num_check = n())
+parentcounts <- data[data$parent1on1 != 0, ] %>% group_by(Student.ID) %>% summarize(num_parent1on1 = n())
+anyfamcounts <- data[data$anyfamily != 0, ] %>% group_by(Student.ID) %>% summarize(num_anyfamily = n())
+stserv <- merge(stserv, checkcounts, by = "Student.ID", all = T)
+stserv <- merge(stserv, parentcounts, by = "Student.ID", all = T)
+stserv <- merge(stserv, anyfamcounts, by = "Student.ID", all = T)
+stserv[is.na(stserv)] <- 0
 colnames(stserv)[1] <- "Case.ID"
 
 stlist <- merge(stlist, stserv, by = "Case.ID", all = T)
@@ -402,4 +449,14 @@ stlist$criteria <- ifelse(stlist$totabs < 4 | is.na(stlist$totabs), stlist$crite
 unlink("studentlist.csv", recursive = FALSE, force = FALSE)
 
 write.csv(stlist, "studentlist.csv")
+
+
+
+
+
+
+
+
+
+
 
