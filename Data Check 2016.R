@@ -8,7 +8,17 @@ library(XLConnect)
 ###################################      SERVICES DATA CHECK      ##########################################
 # Set the working directory to the local folder containing dataset. Can be done manually
 # by going to Session -> Set Working Directory -> Choose Directory 
-setwd("~/Dropbox/CIS Data")
+macdatawd <- "~/Dropbox/CIS Data"
+windowsdatawd <- "C:/Users/USER/Dropbox/CIS Data"
+if(file.exists(macdatawd)){
+  setwd(file.path(macdatawd))
+} else { 
+  if(file.exists(windowsdatawd)){
+    setwd(file.path(windowsdatawd))
+  }
+  }
+
+
 
 # This is the name I have been using for the detailed service dataset, however we may want to start using a different naming convention
 # This is the "Tier II and III Support Detail" report. 
@@ -121,15 +131,36 @@ toomanyhourssum <- read.csv("toomanyhourssum.csv")
 write.csv(indivbatchsum, "indivbatchsum.csv")
 indivbatchsum <- read.csv("indivbatchsum.csv")
 
-setwd("~/Dropbox/Data Checks")
+mac_datacheck <- "~/Dropbox/Data Checks"
+windows_datacheck <- "C:/Users/USER/Dropbox/Data Checks"
+
+if(file.exists(mac_datacheck)){
+  setwd(file.path(mac_datacheck))
+} else { 
+  if(file.exists(windows_datacheck)){
+    setwd(file.path(windows_datacheck))
+  }
+}
+
 
 # File management within dropbox
+if(file.exists(mac_datacheck)){
 oldfiles <- c("~/Dropbox/Data Checks/Old")
 movefiles <- list.files(path = "~/Dropbox/Data Checks/", pattern =".xlsx", all.files = FALSE, recursive = FALSE, include.dirs = FALSE)
 file.copy(from=movefiles, to=oldfiles, 
          overwrite = FALSE, recursive = FALSE, 
         copy.mode = TRUE)
 file.remove(movefiles, recursive = FALSE)
+} else {
+  if(file.exists(windows_datacheck)) { 
+  oldfiles <- c("C:/Users/USER/Dropbox/Data Checks/Old")
+  movefiles <- list.files(path = "C:/Users/USER/Dropbox/Data Checks/", pattern =".xlsx", all.files = FALSE, recursive = FALSE, include.dirs = FALSE)
+  file.copy(from=movefiles, to=oldfiles, 
+            overwrite = FALSE, recursive = FALSE, 
+            copy.mode = TRUE)
+  file.remove(movefiles, recursive = FALSE)
+  }
+  }
 
 # write datasets of problem issues for all schools to an excel spreadsheet ####
 setwd("~/Dropbox/Data Checks")
@@ -338,7 +369,13 @@ attach(data)
 data$flagged <- flag.np | flag.ns | flag.ib | flag.bd | flag.tmh | flag.tier2indiv | flag.tier3group
 detach(data)
 
-setwd("~/Dropbox/CIS Data")
+if(file.exists(macdatawd)){
+  setwd(file.path(macdatawd))
+} else { 
+  if(file.exists(windowsdatawd)){
+    setwd(file.path(windowsdatawd))
+  }
+}
 
 unlink("ServiceD1516CL.csv", recursive = FALSE, force = FALSE)
 write.csv(data, "ServiceD1516CL.csv")
@@ -347,13 +384,19 @@ write.csv(data, "ServiceD1516CL.csv")
 ##################################      OUTCOME DATA CHECK      ###############################
 
 
-
-setwd("~/Dropbox/CIS Data")
+if(file.exists(macdatawd)){
+  setwd(file.path(macdatawd))
+} else { 
+  if(file.exists(windowsdatawd)){
+    setwd(file.path(windowsdatawd))
+  }
+}
 
 cs<-readWorksheetFromFile('Caselist1516.xls', sheet=1, header = T, startRow = 4)
 
 attend <- readWorksheetFromFile('Attendance1516.xls', sheet=1, header = T, startRow = 5)
 attend <- attend[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period", "Value")]
+
 
 risk <- readWorksheetFromFile('TQS1516.xls', sheet=1, header=T, startRow = 3)
 risk <- risk[, c("Case.ID", "X..Goals", "X..Risk.Factors")]
@@ -449,9 +492,6 @@ stlist$criteria <- ifelse(stlist$totabs < 4 | is.na(stlist$totabs), stlist$crite
 unlink("studentlist.csv", recursive = FALSE, force = FALSE)
 
 write.csv(stlist, "studentlist.csv")
-
-
-
 
 
 
