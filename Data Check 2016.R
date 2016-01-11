@@ -163,7 +163,6 @@ file.remove(movefiles, recursive = FALSE)
   }
 
 # write datasets of problem issues for all schools to an excel spreadsheet ####
-setwd("~/Dropbox/Data Checks")
 SERV<-loadWorkbook (paste("Data Check ", as.character(Sys.Date()),".xlsx") , create = TRUE )
 createSheet ( SERV, "No Service Provider")
 writeWorksheet(SERV,noprovider,"No Service Provider")
