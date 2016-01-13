@@ -26,7 +26,7 @@ if(file.exists(macdatawd)){
 data<-readWorksheetFromFile('ServiceD1516.xls', sheet=1, header = T, startRow = 5)
 colnames(data)[1] <- "Student.ID"
 data <- data[!is.na(data$Student.ID), ] # get rid of accidental blank rows
-data <- data[as.Date(data$Begin.Date) > as.Date("8aug2015","%d%b%Y" ), ]
+data <- data[as.Date(data$Begin.Date) > as.Date("8aug2015","%d%b%Y"), ] #get rid of services before school year
 
 
 # Create dataset of all observations with missing service providers for CIS staff (note- Service.Provider.Type for 1415)
@@ -56,7 +56,7 @@ detach(data)
 
 # flag entries with different begin/end dates #####
 # create dummy for start/end dates not the same
-data$flag.bd <- data$Begin.Date != data$End.Date # flag original dataset
+data$flag.bd <- as.Date(data$Begin.Date) != as.Date(data$End.Date) # flag original dataset
 baddates <- data[data$flag.bd, ]
 byentry <- data %>% group_by(Provider.Name, Begin.Date, End.Date, flag.bd, Recorded.As, Notes) %>% summarize(Hours = sum(Hours), number_entries = n() )
 baddatesum <- byentry[byentry$flag.bd == TRUE, ]
@@ -163,7 +163,6 @@ file.remove(movefiles, recursive = FALSE)
   }
 
 # write datasets of problem issues for all schools to an excel spreadsheet ####
-setwd("~/Dropbox/Data Checks")
 SERV<-loadWorkbook (paste("Data Check ", as.character(Sys.Date()),".xlsx") , create = TRUE )
 createSheet ( SERV, "No Service Provider")
 writeWorksheet(SERV,noprovider,"No Service Provider")
@@ -383,6 +382,12 @@ write.csv(data, "ServiceD1516CL.csv")
 
 ##################################      OUTCOME DATA CHECK      ###############################
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+setwd("~/Dropbox/CIS Data")
+=======
+>>>>>>> corey-edits
 
 if(file.exists(macdatawd)){
   setwd(file.path(macdatawd))
@@ -391,60 +396,147 @@ if(file.exists(macdatawd)){
     setwd(file.path(windowsdatawd))
   }
 }
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> corey-edits
 
 cs<-readWorksheetFromFile('Caselist1516.xls', sheet=1, header = T, startRow = 4)
 
 attend <- readWorksheetFromFile('Attendance1516.xls', sheet=1, header = T, startRow = 5)
-attend <- attend[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period", "Value")]
+attend <- attend[, c("Case.ID", "Outcome.Item","Report.Period", "Value", "Date")]
+attend <- attend[attend$Outcome.Item %in% c("Unexcused Absence", "Excused Absence", "ISS", "OSS"), ]
+
 
 
 risk <- readWorksheetFromFile('TQS1516.xls', sheet=1, header=T, startRow = 3)
 risk <- risk[, c("Case.ID", "X..Goals", "X..Risk.Factors")]
+risk <- risk[risk$Case.Status == "Active", ]
 
+grades <-  readWorksheetFromFile('Grades1516.xls', sheet=1, header = T, startRow = 5)
+# replace grade subjects
+#grades$Outcome.Item[grades$Notes != ""] <- grades$Notes[grades$Notes != ""]
+#gradesfull <- grades
+#grades <- grades[grades$Outcome.Item %in% c("GPA", "Science", "Math", "Reading", "Writing", "Social Studies", "Lang. Arts")]
+grades <- grades[, c("Case.ID", "Outcome.Item","Report.Period", "Value")]
 
-attend <- attend[attend$Outcome.Item %in% c("Unexcused Absence", "Excused Absence", "ISS", "OSS"), ]
+# Flag entries that have incorrect dates
+
+attenddates <- attend[as.Date(attend$Date, "%d-%b-%y") < as.Date("8aug2015","%d%b%Y") & as.Date(attend$Date, "%d-%b-%y") > as.Date("1aug2016", "%d%b%Y"), ]
+
 
 # flag entries that have duplicated student, report period, outcome item #####
 attend1 <- attend
-attend1$dup <- duplicated(attend1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
+attend1$dup <- duplicated(attend1[, c("Case.ID", "Outcome.Item","Report.Period")])
 attend1 <- attend1[order(!attend1$dup), ]
-attend1$dup2 <- duplicated(attend1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
+attend1$dup2 <- duplicated(attend1[, c("Case.ID", "Outcome.Item","Report.Period")])
 attend1 <- attend1[attend1$dup | attend1$dup2, ]
 write.csv(attend1, "attendance_duplicates.csv")
 ############### Above csv is for you and/or Sheri to check on duplicates with the GC's
-attend <- attend[!duplicated(attend[,c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")]), ] # This is a soft option that just deletes one of the duplicates
-attend <- spread(attend, Outcome.Item, Value)
-attend <- attend[, c("Case.ID", "Excused Absence", "Unexcused Absence", "ISS", "OSS")] 
 
-grades <-  readWorksheetFromFile('Grades1516.xls', sheet=1, header = T, startRow = 5)
-
-grades <- grades[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period", "Value")]
-
-grades<- grades[ grades$Report.Period %in% c("1st Grading Period", "Baseline"), ]
 ########### flag entries that have duplicated student, report period, outcome item
 grades1 <- grades
-grades1$dup <- duplicated(grades1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
+grades1$dup <- duplicated(grades1[, c("Case.ID", "Outcome.Item","Report.Period")])
 grades1 <- grades1[order(!grades1$dup), ]
-grades1$dup2 <- duplicated(grades1[, c("Site", "Case.ID", "Name", "Grade.Level", "Outcome.Item","Report.Period")])
+grades1$dup2 <- duplicated(grades1[, c("Case.ID", "Outcome.Item","Report.Period")])
 grades1 <- grades1[grades1$dup | grades1$dup2, ]
 write.csv(grades1, "grades_duplicates.csv")
 ############### Above csv is for you and/or Sheri to check on duplicates with the GC's
 
-#Merging grades and attendance, and aggregate service info into stlist #####
-grades <- spread(grades, Outcome.Item, Value)
-grades <- grades[, c("Case.ID", "Lang. Arts","Math", "Other", "Reading", "Science", "Writing")]
+# Replacing Baseline values with correct report period, if other entry for report period is not present.####
+attend <- attend[!duplicated(attend[,c("Case.ID", "Outcome.Item","Report.Period")]), ] # This is a soft option that just deletes one of the duplicates arbitrarily
+attend <- attend[order(attend$Report.Period), ] # ordering the observations based on the report period, so that all Baseline observations are last. Now when we find duplicates the Baseline observations will be the duplicates, and not the 1st grading period
+attreport <- attend$Report.Period
+
+# creating a vector "period" equal to the report period that the date of the entry corresponds to
+dates <- c(as.Date("1sep2015","%d%b%Y"), as.Date("15jan2016", "%d%b%Y"), as.Date("24mar2016", "%d%b%Y"),as.Date("9jun2016", "%d%b%Y"),as.Date("1aug2016", "%d%b%Y"))
+period <- rep(NA, nrow(attend))
+attend$Date <- as.Date(attend$Date, "%d-%b-%y")
+period[attend$Date < dates[2]] <- "1st Grading Period"
+period[attend$Date > dates[2]] <- "2nd Grading Period"
+period[attend$Date > dates[3]] <- "3rd Grading Period"
+period[attend$Date > dates[4]] <- "4th Grading Period"
+
+# creating a vector that is the report period with "baseline" replaced with the report period for the date entered.
+for(i in 1:length(attreport)){
+  if(attreport[i] == "Baseline"){attreport[i] <- period[i]}
+}
+dup <- duplicated(cbind(attend[,c("Case.ID", "Outcome.Item")], attreport)) # finding rows where report.period is baseline and there is already a 1st quarter entry
+replace <- (!dup) & (attend$Report.Period == "Baseline") # rows to replace in data are baseline rows for which there is not another entry for the grading period corresponding to the entry date for the baseline entry
+
+for(i in 1:nrow(attend)){
+  if(replace[i]){attend$Report.Period[i] <- attreport[i] } # if the row is a baseline outcome and that student outcome combo doesn't have a value for the report period corresponding to the date of this entry, replace baseline with the report period for the date this was entered.
+}
+
+
+# Repeating for Grades, but only replacing Baseline with 1st Grading Period (grades don't supply the date for some reason)
+grades <- grades[!duplicated(grades[,c("Case.ID", "Outcome.Item","Report.Period")]), ] # This is a soft option that just deletes one of the duplicates arbitrarily
+grades <- grades[order(grades$Report.Period), ] # ordering the observations based on the report period, so that all Baseline observations are last. Now when we find duplicates the Baseline observations will be the duplicates, and not the 1st grading period
+attreport <- grades$Report.Period
+attreport[attreport == "Baseline"] <- "1st Grading Period"
+
+dup <- duplicated(cbind(grades[,c("Case.ID", "Outcome.Item")], attreport)) # finding rows where report.period is baseline and there is already a 1st quarter entry
+replace <- (!dup) & (grades$Report.Period == "Baseline") # rows to replace in data are baseline rows for which there is not another entry for the 1st grading period
+
+grades$Report.Period[replace] <- "1st Grading Period"
+
+badrp.grades <- grades[!grades$Report.Period %in% c("Baseline", "1st Grading Period", "2nd Grading Period", "3rd Grading Period", "4th Grading Period"), ]
+badrp.attend <- attend[!attend$Report.Period %in% c("Baseline", "1st Grading Period", "2nd Grading Period", "3rd Grading Period", "4th Grading Period"), ]
+
+#Spreading grades and attendance, replacing subject values  ####
+
+
+#Spreading
+quartersubject <- paste("Q_", substr(grades$Report.Period, 1,1), " ", grades$Outcome.Item, sep = "")
+quartersubjectgpa <- paste(grades$Outcome.Item," ",  "Q_",substr(grades$Report.Period, 1,1), sep = "")
+grades$quartersubject <- quartersubject
+grades$quartersubject[grades$Outcome.Item == "GPA"] <- quartersubjectgpa[grades$Outcome.Item == "GPA"]
+
+grades <- spread(grades[, ! colnames(grades) %in% c("Outcome.Item", "Report.Period")], quartersubject, Value)
+
+attend$quartersubject <- paste("Q_", substr(attend$Report.Period, 1,1), " ", attend$Outcome.Item, sep = "")
+attend <- spread(attend[, ! colnames(attend) %in% c("Outcome.Item", "Report.Period", "Date")], quartersubject, Value)
+
+# merging grades and attendance, Aggregating Outcome info, and aggregate service info into stlist #####
+attend$Case.ID <- as.numeric(attend$Case.ID) # These ID's get imported as strings for some reason, and some have leading zero's while others do not- "011" vs "11" should be the same student, but don't merge together unless we change them to numeric, where the are both 11
+grades$Case.ID <- as.numeric(grades$Case.ID)
+cs$Case.ID <- as.numeric(cs$Case.ID)
+risk$Case.ID <- as.numeric(risk$Case.ID)
 stlist <- merge(cs, attend, by = "Case.ID", all = T)
 stlist <- merge(stlist, grades, by = "Case.ID", all = T)
-stlist <- merge(stlist, risk, by = "Case.ID", all = T)
+stlist <- merge(stlist, risk, by = "Case.ID", all.x = T)
 
-stlist$avgrade <- rowMeans(stlist[, c("Science", "Math", "Writing", "Reading", "Lang. Arts")], na.rm =T)
+#Aggregating Outcome info
+stlist$avgrade1 <- rowMeans(stlist[, c("Q_1 Science", "Q_1 Math", "Q_1 Writing", "Q_1 Reading", "Q_1 Lang. Arts")], na.rm =T)
+stlist$avgrade2 <- rowMeans(stlist[, c("Q_2 Science", "Q_2 Math", "Q_2 Writing", "Q_2 Reading", "Q_2 Lang. Arts")], na.rm =T)
+stlist$avgrade3 <- rowMeans(stlist[, c("Q_3 Science", "Q_3 Math", "Q_3 Writing", "Q_3 Reading", "Q_3 Lang. Arts")], na.rm =T)# will give an error before 3rd quarter outcomes are entered
+stlist$avgrade4 <- rowMeans(stlist[, c("Q_4 Science", "Q_4 Math", "Q_4 Writing", "Q_4 Reading", "Q_4 Lang. Arts")], na.rm =T)# will give an error before 4th quarter outcomes are entered
+stlist$avgrade <- rowMeans(stlist[, colnames(stlist) %in% c("avgrade1", "avgrade2", "avgrade3", "avgrade4")], na.rm = T)
 stlist$nogrades <- is.na(stlist$avgrade)
-stlist$totabs <- rowSums(stlist[, c("Excused Absence", "Unexcused Absence")], na.rm = T)
 
-stlist$noabs <- is.na(stlist$"Excused Absence") & is.na(stlist$"Unexcused Absence")
-stlist[stlist$noabs, ]$totabs<- NA 
+stlist$Science <- rowMeans(stlist[, grep("Science", colnames(stlist))], na.rm = T)
+stlist$Math <- rowMeans(stlist[, grep("Math", colnames(stlist))], na.rm = T)
+stlist$Writing <- rowMeans(stlist[, grep("Writing", colnames(stlist))], na.rm = T)
+stlist$Reading <- rowMeans(stlist[, grep("Reading", colnames(stlist))], na.rm = T)
+stlist$"Lang. Arts" <- rowMeans(stlist[, grep("Lang. Arts", colnames(stlist))], na.rm = T)
 
-stlist$suspended <- (is.na(stlist$ISS) & stlist$OSS > 0)|(is.na(stlist$OSS) & stlist$ISS > 0)|(stlist$ISS > 0 | stlist$OSS > 0)
+stlist$totabs1 <- rowSums(stlist[, c("Q_1 Excused Absence", "Q_1 Unexcused Absence")], na.rm = T)
+stlist$totabs1[is.na(stlist$"Q_1 Excused Absence") & is.na(stlist$"Q_1 Unexcused Absence") ] <- NA
+stlist$totabs2 <- rowSums(stlist[, c("Q_2 Excused Absence", "Q_2 Unexcused Absence")], na.rm = T)# these will give errors before the outcomes are entered for that quarter
+stlist$totabs2[is.na(stlist$"Q_2 Excused Absence") & is.na(stlist$"Q_2 Unexcused Absence") ] <- NA
+stlist$totabs3 <- rowSums(stlist[, c("Q_3 Excused Absence", "Q_3 Unexcused Absence")], na.rm = T)
+stlist$totabs3[is.na(stlist$"Q_3 Excused Absence") & is.na(stlist$"Q_3 Unexcused Absence") ] <- NA
+stlist$totabs4 <- rowSums(stlist[, c("Q_4 Excused Absence", "Q_4 Unexcused Absence")], na.rm = T)
+stlist$totabs4[is.na(stlist$"Q_4 Excused Absence") & is.na(stlist$"Q_4 Unexcused Absence") ] <- NA
+
+stlist$totabs <- rowSums(cbind(stlist[, colnames(stlist) %in% c("totabs1", "totabs2", "totabs3", "totabs4")], 0), na.rm = T)
+
+#stlist$noabs <- is.na(stlist$totabs)
+
+stlist[,grep("(ISS)|(OSS)", colnames(stlist))][is.na(stlist[, grep("(ISS)|(OSS)", colnames(stlist))])] <- 0
+stlist$suspended <- rowSums(stlist[, grep("(ISS)|(OSS)", colnames(stlist))]) > 0
+stlist$suspended[is.na(stlist$suspended)] <- FALSE
+stlist$suspended <- as.numeric(stlist$suspended)
 
 # Adding service aggregates to student list
 stserv <- data %>% group_by(Student.ID) %>% summarize(Hours = sum(Hours), HoursSpent = sum(hoursspent), individual = sum(individual), group = sum(group), tier1 = sum(tier1), 
