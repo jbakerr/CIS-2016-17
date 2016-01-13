@@ -382,12 +382,7 @@ write.csv(data, "ServiceD1516CL.csv")
 
 ##################################      OUTCOME DATA CHECK      ###############################
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-setwd("~/Dropbox/CIS Data")
-=======
->>>>>>> corey-edits
+
 
 if(file.exists(macdatawd)){
   setwd(file.path(macdatawd))
@@ -396,10 +391,7 @@ if(file.exists(macdatawd)){
     setwd(file.path(windowsdatawd))
   }
 }
-<<<<<<< HEAD
-=======
->>>>>>> master
->>>>>>> corey-edits
+
 
 cs<-readWorksheetFromFile('Caselist1516.xls', sheet=1, header = T, startRow = 4)
 
