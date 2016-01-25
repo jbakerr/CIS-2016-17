@@ -382,8 +382,6 @@ write.csv(data, "ServiceD1516CL.csv")
 
 ##################################      OUTCOME DATA CHECK      ###############################
 
-
-
 if(file.exists(macdatawd)){
   setwd(file.path(macdatawd))
 } else { 
@@ -506,22 +504,30 @@ stlist$avgrade4 <- rowMeans(stlist[, c("Q_4 Science", "Q_4 Math", "Q_4 Writing",
 stlist$avgrade <- rowMeans(stlist[, colnames(stlist) %in% c("avgrade1", "avgrade2", "avgrade3", "avgrade4")], na.rm = T)
 stlist$nogrades <- is.na(stlist$avgrade)
 
+#These are average grades in each subject. Science is made by taking the mean of every column that contains the text "Science". Google "regular expressions r" for more info on grep.
 stlist$Science <- rowMeans(stlist[, grep("Science", colnames(stlist))], na.rm = T)
 stlist$Math <- rowMeans(stlist[, grep("Math", colnames(stlist))], na.rm = T)
 stlist$Writing <- rowMeans(stlist[, grep("Writing", colnames(stlist))], na.rm = T)
 stlist$Reading <- rowMeans(stlist[, grep("Reading", colnames(stlist))], na.rm = T)
 stlist$"Lang. Arts" <- rowMeans(stlist[, grep("Lang. Arts", colnames(stlist))], na.rm = T)
+stlist$"Social Studies" <- rowMeans(stlist[, grep("Social Studies", colnames(stlist))], na.rm = T)
 
 stlist$totabs1 <- rowSums(stlist[, c("Q_1 Excused Absence", "Q_1 Unexcused Absence")], na.rm = T)
 stlist$totabs1[is.na(stlist$"Q_1 Excused Absence") & is.na(stlist$"Q_1 Unexcused Absence") ] <- NA
-stlist$totabs2 <- rowSums(stlist[, c("Q_2 Excused Absence", "Q_2 Unexcused Absence")], na.rm = T)# these will give errors before the outcomes are entered for that quarter
-stlist$totabs2[is.na(stlist$"Q_2 Excused Absence") & is.na(stlist$"Q_2 Unexcused Absence") ] <- NA
-stlist$totabs3 <- rowSums(stlist[, c("Q_3 Excused Absence", "Q_3 Unexcused Absence")], na.rm = T)
-stlist$totabs3[is.na(stlist$"Q_3 Excused Absence") & is.na(stlist$"Q_3 Unexcused Absence") ] <- NA
-stlist$totabs4 <- rowSums(stlist[, c("Q_4 Excused Absence", "Q_4 Unexcused Absence")], na.rm = T)
-stlist$totabs4[is.na(stlist$"Q_4 Excused Absence") & is.na(stlist$"Q_4 Unexcused Absence") ] <- NA
+# These take the sums of any columns that contain the text "Q_2" and "Absence". 
+stlist$totabs2 <- rowSums(cbind(stlist[, grep("Q_2.*Absence", colnames(stlist))], NA), na.rm = T)
+#Replaces values with NA where 1) the number of NA values in the columns with "Q_2" and "Absence" is equal to the number of those columns or  2.) the number of columns with "Q_2" and "Absence" is equal to zero
+stlist$totabs2[rowSums(cbind(is.na(stlist[, grep("Q_2.*Absence", colnames(stlist))]), 0)) == length(grep("Q_2.*Absence", colnames(stlist)))
+               |(length(grep("Q_2.*Absence", colnames(stlist))) == 0) ] <- NA
+stlist$totabs3 <- rowSums(cbind(stlist[, grep("Q_3.*Absence", colnames(stlist))], NA), na.rm = T)
+stlist$totabs3[rowSums(cbind(is.na(stlist[, grep("Q_3.*Absence", colnames(stlist))]), 0)) == length(grep("Q_3.*Absence", colnames(stlist)))
+               |(length(grep("Q_3.*Absence", colnames(stlist))) == 0) ] <- NA
+stlist$totabs4 <- rowSums(cbind(stlist[, grep("Q_4.*Absence", colnames(stlist))], NA), na.rm = T)
+stlist$totabs4[rowSums(cbind(is.na(stlist[, grep("Q_4.*Absence", colnames(stlist))]), 0)) == length(grep("Q_4.*Absence", colnames(stlist)))
+               |(length(grep("Q_4.*Absence", colnames(stlist))) == 0) ] <- NA
 
-stlist$totabs <- rowSums(cbind(stlist[, colnames(stlist) %in% c("totabs1", "totabs2", "totabs3", "totabs4")], 0), na.rm = T)
+
+stlist$totabs <- rowSums(cbind(stlist[, colnames(stlist) %in% c("totabs1", "totabs2", "totabs3", "totabs4")], NA), na.rm = T)
 
 #stlist$noabs <- is.na(stlist$totabs)
 
@@ -576,11 +582,6 @@ stlist$criteria <- ifelse(stlist$totabs < 4 | is.na(stlist$totabs), stlist$crite
 unlink("studentlist.csv", recursive = FALSE, force = FALSE)
 
 write.csv(stlist, "studentlist.csv")
-
-
-
-
-
 
 
 
