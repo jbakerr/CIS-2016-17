@@ -27,7 +27,7 @@ data<-readWorksheetFromFile('ServiceD1516.xls', sheet=1, header = T, startRow = 
 colnames(data)[1] <- "Student.ID"
 data <- data[!is.na(data$Student.ID), ] # get rid of accidental blank rows
 data <- data[as.Date(data$Begin.Date) > as.Date("8aug2015","%d%b%Y"), ] #get rid of services before school year
-
+data[data$Tier == "Tier I", ]$Recorded.As <- "Group Setting"
 
 # Create dataset of all observations with missing service providers for CIS staff (note- Service.Provider.Type for 1415)
 noprovider <- data[data$Provider.Type == "CIS Staff" & is.na(data$Provider.Name), ]
@@ -121,6 +121,8 @@ data$flag.groupsize[(!is.na(data$setting)) & data$groupsize == 1 & data$setting 
 
 badgroupsize <- data[data$flag.groupsize, ]
 
+
+
 # Save and Reloading datasets to fix data class issues, Dropbox File Management********####
 write.csv(baddates, "baddate.csv")
 baddates <- read.csv("baddate.csv")
@@ -133,6 +135,19 @@ indivbatchsum <- read.csv("indivbatchsum.csv")
 
 mac_datacheck <- "~/Dropbox/Data Checks"
 windows_datacheck <- "C:/Users/USER/Dropbox/Data Checks"
+
+indivbatch <- indivbatch[indivbatch$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+indivbatchsum <- indivbatchsum[indivbatchsum$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+noprovider <- noprovider[noprovider$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+badsetting <- badsetting[badsetting$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+nosupport <- nosupport[nosupport$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+baddates <- baddates[baddates$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+baddatesum <- baddatesum[baddatesum$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+toomanyhours <- toomanyhours[toomanyhours$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+toomanyhourssum <- toomanyhourssum[toomanyhourssum$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+
+
+
 
 if(file.exists(mac_datacheck)){
   setwd(file.path(mac_datacheck))
