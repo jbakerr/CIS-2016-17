@@ -138,7 +138,7 @@ windows_datacheck <- "C:/Users/USER/Dropbox/Data Checks"
 
 indivbatch <- indivbatch[indivbatch$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
 indivbatchsum <- indivbatchsum[indivbatchsum$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
-noprovider <- noprovider[noprovider$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
+#noprovider <- noprovider[noprovider$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
 badsetting <- badsetting[badsetting$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
 nosupport <- nosupport[nosupport$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
 baddates <- baddates[baddates$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
@@ -191,8 +191,8 @@ createSheet ( SERV, "Too many ind. hours sum" )
 writeWorksheet(SERV,toomanyhourssum,"Too many ind. hours sum")
 createSheet ( SERV, "Too many ind. hours full" )
 writeWorksheet(SERV,toomanyhours,"Too many ind. hours full")
-createSheet(SERV, "Diff. Begin-End Dates Sum")
-writeWorksheet(SERV, baddates, "Diff. Begin-End Dates Sum")
+#createSheet(SERV, "Diff. Begin-End Dates Sum")
+#writeWorksheet(SERV, baddates, "Diff. Begin-End Dates Sum")
 createSheet(SERV, "Setting - Tier Mismatches")
 writeWorksheet(SERV, badsetting, "Setting - Tier Mismatches" )
 saveWorkbook(SERV)
@@ -212,8 +212,8 @@ createSheet(hillside, "Too many ind. hours sum")
 writeWorksheet(hillside, subset(toomanyhourssum, Home.School == "Hillside High School"), "Too many ind. hours sum")
 createSheet(hillside, "Too many ind. hours full")
 writeWorksheet(hillside, subset(toomanyhours, Home.School == "Hillside High School"), "Too many ind. hours full")
-createSheet(hillside, "Diff. Begin-End Dates Sum")
-writeWorksheet(hillside, subset(baddates, Home.School == "Hillside High School"), "Diff. Begin-End Dates Sum")
+#createSheet(hillside, "Diff. Begin-End Dates Sum")
+#writeWorksheet(hillside, subset(baddates, Home.School == "Hillside High School"), "Diff. Begin-End Dates Sum")
 createSheet(hillside, "Setting - Tier Mismatches")
 writeWorksheet(hillside, subset(badsetting, Home.School == "Hilside High School"), "Setting - Tier Mismatches" )
 saveWorkbook(hillside)
@@ -232,8 +232,8 @@ createSheet(plc, "Too many ind. hours sum")
 writeWorksheet(plc, subset(toomanyhourssum, Home.School == "Durham Performance Learning Center"), "Too many ind. hours sum")
 createSheet(plc, "Too many ind. hours full")
 writeWorksheet(plc, subset(toomanyhours, Home.School == "Durham Performance Learning Center"), "Too many ind. hours full")
-createSheet(plc, "Diff. Begin-End Dates Sum")
-writeWorksheet(plc, subset(baddates, Home.School == "Durham Performance Learning Center"), "Diff. Begin-End Dates Sum")
+#createSheet(plc, "Diff. Begin-End Dates Sum")
+#writeWorksheet(plc, subset(baddates, Home.School == "Durham Performance Learning Center"), "Diff. Begin-End Dates Sum")
 createSheet(plc, "Setting - Tier Mismatches")
 writeWorksheet(plc, subset(badsetting, Home.School == "Durham Performance Learning Center"), "Setting - Tier Mismatches" )
 saveWorkbook(plc)
@@ -270,8 +270,8 @@ createSheet(ye, "Too many ind. hours sum")
 writeWorksheet(ye, subset(toomanyhourssum, Home.School == "YE Smith Elementary"), "Too many ind. hours sum")
 createSheet(ye, "Too many ind. hours full")
 writeWorksheet(ye, subset(toomanyhours, Home.School == "YE Smith Elementary"), "Too many ind. hours full")
-createSheet(ye, "Diff. Begin-End Dates Sum")
-writeWorksheet(ye, subset(baddates, Home.School == "YE Smith Elementary"), "Diff. Begin-End Dates Sum")
+#createSheet(ye, "Diff. Begin-End Dates Sum")
+#writeWorksheet(ye, subset(baddates, Home.School == "YE Smith Elementary"), "Diff. Begin-End Dates Sum")
 createSheet(ye, "Setting - Tier Mismatches")
 writeWorksheet(ye, subset(badsetting, Home.School == "YE Smith Elementary"), "Setting - Tier Mismatches" )
 saveWorkbook(ye)
@@ -291,8 +291,8 @@ createSheet(ek, "Too many ind. hours sum")
 writeWorksheet(ek, subset(toomanyhourssum, Home.School == "EK Powe Elementary School"), "Too many ind. hours sum")
 createSheet(ek, "Too many ind. hours full")
 writeWorksheet(ek, subset(toomanyhours, Home.School == "EK Powe Elementary School"), "Too many ind. hours full")
-createSheet(ek, "Diff. Begin-End Dates Sum")
-writeWorksheet(ek, subset(baddates, Home.School == "EK Powe Elementary School"), "Diff. Begin-End Dates Sum")
+#createSheet(ek, "Diff. Begin-End Dates Sum")
+#writeWorksheet(ek, subset(baddates, Home.School == "EK Powe Elementary School"), "Diff. Begin-End Dates Sum")
 createSheet(ek, "Setting - Tier Mismatches")
 writeWorksheet(ek, subset(badsetting, Home.School == "EK Powe Elementary School"), "Setting - Tier Mismatches" )
 saveWorkbook(ek)
@@ -311,8 +311,8 @@ createSheet(glenn, "Too many ind. hours sum")
 writeWorksheet(glenn, subset(toomanyhourssum, Home.School == "Glenn Elementary School"), "Too many ind. hours sum")
 createSheet(glenn, "Too many ind. hours full")
 writeWorksheet(glenn, subset(toomanyhours, Home.School == "Glenn Elementary School"), "Too many ind. hours full")
-createSheet(glenn, "Diff. Begin-End Dates Sum")
-writeWorksheet(glenn, subset(baddates, Home.School == "Glenn Elementary School"), "Diff. Begin-End Dates Sum")
+#createSheet(glenn, "Diff. Begin-End Dates Sum")
+#writeWorksheet(glenn, subset(baddates, Home.School == "Glenn Elementary School"), "Diff. Begin-End Dates Sum")
 createSheet(glenn, "Setting - Tier Mismatches")
 writeWorksheet(glenn, subset(badsetting, Home.School == "Glenn Elementary School"), "Setting - Tier Mismatches" )
 saveWorkbook(glenn)
@@ -331,8 +331,8 @@ createSheet(northern, "Too many ind. hours sum")
 writeWorksheet(northern, subset(toomanyhourssum, Home.School == "Northern"), "Too many ind. hours sum")
 createSheet(northern, "Too many ind. hours full")
 writeWorksheet(northern, subset(toomanyhours, Home.School == "Northern"), "Too many ind. hours full")
-createSheet(northern, "Diff. Begin-End Dates Sum")
-writeWorksheet(northern, subset(baddates, Home.School == "Northern"), "Diff. Begin-End Dates Sum")
+#createSheet(northern, "Diff. Begin-End Dates Sum")
+#writeWorksheet(northern, subset(baddates, Home.School == "Northern"), "Diff. Begin-End Dates Sum")
 createSheet(northern, "Setting - Tier Mismatches")
 writeWorksheet(northern, subset(badsetting, Home.School == "Northern"), "Setting - Tier Mismatches" )
 saveWorkbook(northern)
@@ -351,8 +351,8 @@ createSheet(southern, "Too many ind. hours sum")
 writeWorksheet(southern, subset(toomanyhourssum, Home.School == "Southern High School"), "Too many ind. hours sum")
 createSheet(southern, "Too many ind. hours full")
 writeWorksheet(southern, subset(toomanyhours, Home.School == "Southern High School"), "Too many ind. hours full")
-createSheet(southern, "Diff. Begin-End Dates Sum")
-writeWorksheet(southern, subset(baddates, Home.School == "Southern High School"), "Diff. Begin-End Dates Sum")
+#createSheet(southern, "Diff. Begin-End Dates Sum")
+#writeWorksheet(southern, subset(baddates, Home.School == "Southern High School"), "Diff. Begin-End Dates Sum")
 createSheet(southern, "Setting - Tier Mismatches")
 writeWorksheet(southern, subset(badsetting, Home.School == "Southern High School"), "Setting - Tier Mismatches" )
 saveWorkbook(southern)
@@ -371,8 +371,8 @@ createSheet(neal, "Too many ind. hours sum")
 writeWorksheet(neal, subset(toomanyhourssum, Home.School == "Neal Middle School"), "Too many ind. hours sum")
 createSheet(neal, "Too many ind. hours full")
 writeWorksheet(neal, subset(toomanyhours, Home.School == "Neal Middle School"), "Too many ind. hours full")
-createSheet(neal, "Diff. Begin-End Dates Sum")
-writeWorksheet(neal, subset(baddates, Home.School == "Neal Middle School"), "Diff. Begin-End Dates Sum")
+#createSheet(neal, "Diff. Begin-End Dates Sum")
+#writeWorksheet(neal, subset(baddates, Home.School == "Neal Middle School"), "Diff. Begin-End Dates Sum")
 createSheet(neal, "Setting - Tier Mismatches")
 writeWorksheet(neal, subset(badsetting, Home.School == "Neal Middle School"), "Setting - Tier Mismatches" )
 saveWorkbook(neal)
@@ -407,6 +407,9 @@ if(file.exists(macdatawd)){
 
 
 cs<-readWorksheetFromFile('Caselist1516.xls', sheet=1, header = T, startRow = 4)
+
+cs <- cs[cs$X...Date.Inactivated > as.POSIXct("2016-01-01", "%Y-%m-%d", tz= "EST") | cs$Case.Status == "Active", ]
+
 
 attend <- readWorksheetFromFile('Attendance1516.xls', sheet=1, header = T, startRow = 5)
 attend <- attend[, c("Case.ID", "Outcome.Item","Report.Period", "Value", "Date")]
@@ -571,6 +574,8 @@ stlist[is.na(stlist$individual), ]$individual <- 0
 stlist[is.na(stlist$group), ]$group <- 0
 stlist[, c("tier1", "checkin", "parent1on1", "anyfamily", "num_serv", "num_check", "num_parent1on1", "num_anyfamily")][is.na(stlist[, c("tier1", "checkin", "parent1on1", "anyfamily", "num_serv", "num_check", "num_parent1on1", "num_anyfamily")])] <- 0
 
+
+stlist <- subset(stlist, (Hours > 0 & Case.Status == "InActive") |Case.Status == "Active")
 
 stlist <- stlist[!is.na(stlist$Name), ]
 
