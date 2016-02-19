@@ -15,8 +15,8 @@ if(file.exists(macdatawd)){
 } else { 
   if(file.exists(windowsdatawd)){
     setwd(file.path(windowsdatawd))
-  }
-  }
+}
+}
 
 
 
