@@ -177,6 +177,14 @@ file.remove(movefiles, recursive = FALSE)
   }
   }
 
+
+#schools <- unique(data$Home.School)
+
+#for (i in schools){
+# print(i)} 
+#
+  
+
 # write datasets of problem issues for all schools to an excel spreadsheet ####
 SERV<-loadWorkbook (paste("Data Check ", as.character(Sys.Date()),".xlsx") , create = TRUE )
 createSheet ( SERV, "No Service Provider")
@@ -521,6 +529,8 @@ stlist$avgrade3 <- rowMeans(stlist[, c("Q_3 Science", "Q_3 Math", "Q_3 Writing",
 stlist$avgrade4 <- rowMeans(stlist[, c("Q_4 Science", "Q_4 Math", "Q_4 Writing", "Q_4 Reading", "Q_4 Lang. Arts")], na.rm =T)# will give an error before 4th quarter outcomes are entered
 stlist$avgrade <- rowMeans(stlist[, colnames(stlist) %in% c("avgrade1", "avgrade2", "avgrade3", "avgrade4")], na.rm = T)
 stlist$nogrades <- is.na(stlist$avgrade)
+stlist$nogrades1 <- is.na(stlist$avgrade1)
+stlist$nogrades2 <- is.na(stlist$avgrade2)
 
 #These are average grades in each subject. Science is made by taking the mean of every column that contains the text "Science". Google "regular expressions r" for more info on grep.
 stlist$Science <- rowMeans(stlist[, grep("Science", colnames(stlist))], na.rm = T)
@@ -547,7 +557,10 @@ stlist$totabs4[rowSums(cbind(is.na(stlist[, grep("Q_4.*Absence", colnames(stlist
 
 stlist$totabs <- rowSums(cbind(stlist[, colnames(stlist) %in% c("totabs1", "totabs2", "totabs3", "totabs4")], NA), na.rm = T)
 
-#stlist$noabs <- is.na(stlist$totabs)
+stlist$noabs <- is.na(stlist$totabs)
+stlist$noabs1 <- is.na(stlist$totabs1)
+stlist$noabs2 <- is.na(stlist$totabs2)
+
 
 stlist[,grep("(ISS)|(OSS)", colnames(stlist))][is.na(stlist[, grep("(ISS)|(OSS)", colnames(stlist))])] <- 0
 stlist$suspended <- rowSums(stlist[, grep("(ISS)|(OSS)", colnames(stlist))]) > 0
