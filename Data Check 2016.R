@@ -148,6 +148,7 @@ baddatesum <- baddatesum[baddatesum$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m
 toomanyhours <- toomanyhours[toomanyhours$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
 toomanyhourssum <- toomanyhourssum[toomanyhourssum$Begin.Date > as.POSIXct("2016-01-22", "%Y-%m-%d", tz = "EST"),]
 
+nohours <- data[data$Hours == 0,]  
 
 
 
