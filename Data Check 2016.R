@@ -29,6 +29,8 @@ data <- data[!is.na(data$Student.ID), ] # get rid of accidental blank rows
 data <- data[as.Date(data$Begin.Date) > as.Date("8aug2015","%d%b%Y"), ] #get rid of services before school year
 data[data$Tier == "Tier I", ]$Recorded.As <- "Group Setting"
 data[data$Provider.Type == "Volunteer",]$Provider.Name <- "Volunteer"
+data[data$Provider.Type == "Community Partner",]$Provider.Name <- "Community Partner"
+
 
 
 # Create dataset of all observations with missing service providers for CIS staff (note- Service.Provider.Type for 1415)
