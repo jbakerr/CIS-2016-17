@@ -197,7 +197,7 @@ for(i in workbook.names){
   
 }
 for(i in schools){
-write.xlsx(noprovider[noprovider$Home.School == i,], file = paste(i, "Data Check",  as.character(Sys.Date()),".xlsx"), col.names=TRUE, append=FALSE)
+write.xlsx(noprovider[noprovider$Home.School == schools["Northern"],], file = paste(as.character(i), "TEST",  as.character(Sys.Date()),".xlsx"), col.names=TRUE, append=FALSE)
 
 }
 
