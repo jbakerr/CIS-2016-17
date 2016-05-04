@@ -595,7 +595,7 @@ stlist$suspended <- as.numeric(stlist$suspended)
 
 # Adding service aggregates to student list
 stserv <- data %>% group_by(Student.ID) %>% summarize(Hours = sum(Hours), HoursSpent = sum(hoursspent), individual = sum(individual), group = sum(group), tier1 = sum(tier1), 
-                                                      checkin = sum(checkin), parent1on1 = sum(parent1on1), anyfamily = sum(anyfamily), num_serv = length(Student.ID) )
+                                                      checkin = sum(checkin), parent1on1 = sum(parent1on1), anyfamily = sum(anyfamily), num_serv = length(Student.ID), service_date = tail(Begin.Date, n =1) )
 checkcounts <- data[data$checkin != 0 , ] %>% group_by(Student.ID) %>% summarize(num_check = n())
 parentcounts <- data[data$parent1on1 != 0, ] %>% group_by(Student.ID) %>% summarize(num_parent1on1 = n())
 anyfamcounts <- data[data$anyfamily != 0, ] %>% group_by(Student.ID) %>% summarize(num_anyfamily = n())
@@ -636,6 +636,7 @@ stlist$criteria <-  ifelse(is.element(stlist$Site, high) & stlist$criteria != 1 
 
 stlist$criteria <- ifelse(stlist$suspended == FALSE | is.na(stlist$suspended), stlist$criteria, stlist$criteria + 1)
 stlist$criteria <- ifelse(stlist$totabs < 4 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
+
 
 #Write studentlist to the working directory ####
 unlink("studentlist.csv", recursive = FALSE, force = FALSE)
