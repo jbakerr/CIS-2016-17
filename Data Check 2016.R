@@ -627,7 +627,7 @@ stlist$criteria <- 0
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & (stlist$`Lang. Arts` <= 2 & !is.na(stlist$`Lang. Arts`)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & stlist$criteria != 1 & (stlist$Math <= 2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & stlist$criteria != 1 & (stlist$Science <= 2 & !is.na(stlist$Science)), stlist$criteria + 1, stlist$criteria)
-stlist$criteria <- ifelse(stlist$Site == "YE Smith Elementary" & (stlist$Writing <=2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
+stlist$criteria <- ifelse(stlist$Site == "YE Smith Elementary" & (stlist$criteria != 1 & (stlist$Writing <=2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
 
 stlist$criteria <-  ifelse(is.element(stlist$Site, high) & (stlist$`Lang. Arts` < 70 & !is.na(stlist$`Lang. Arts`)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, high) & stlist$criteria != 1 & (stlist$Math < 70 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
