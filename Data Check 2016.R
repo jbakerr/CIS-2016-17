@@ -87,7 +87,7 @@ data$setting <- NA
 data$setting[data$Recorded.As == "Group Setting" & data$Tier == "Tier II" ] <- "Group Setting"
 data$setting[data$Recorded.As == "Individual" & data$Tier == "Tier III" ] <- "Individual"
 data$setting[data$Recorded.As == "Tier I"] <- "Tier I"
-
+data$setting[data$Student.Support.Name == "Progress Monitoring/Adjustment"] <- "Individual"
 badsetting <- data[data$flag.tier3group | data$flag.tier2indiv, ]
 
 #Creating groupsize, hoursspent, individual, group, check-ins, parent contacts  etc. ####
