@@ -557,6 +557,7 @@ stlist$nogrades <- is.na(stlist$avgrade)
 stlist$nogrades1 <- is.na(stlist$avgrade1)
 stlist$nogrades2 <- is.na(stlist$avgrade2)
 stlist$nogrades3 <- is.na(stlist$avgrade3)
+stlist$nogrades4 <- is.na(stlist$avgrade4)
 
 #These are average grades in each subject. Science is made by taking the mean of every column that contains the text "Science". Google "regular expressions r" for more info on grep.
 stlist$Science <- rowMeans(stlist[, grep("Science", colnames(stlist))], na.rm = T)
@@ -587,6 +588,7 @@ stlist$noabs <- is.na(stlist$totabs)
 stlist$noabs1 <- is.na(stlist$totabs1)
 stlist$noabs2 <- is.na(stlist$totabs2)
 stlist$noabs3 <- is.na(stlist$totabs3)
+stlist$noabs4 <- is.na(stlist$totabs4)
 
 stlist[,grep("(ISS)|(OSS)", colnames(stlist))][is.na(stlist[, grep("(ISS)|(OSS)", colnames(stlist))])] <- 0
 stlist$suspended <- rowSums(stlist[, grep("(ISS)|(OSS)", colnames(stlist))]) > 0
@@ -635,7 +637,7 @@ stlist$criteria <-  ifelse(is.element(stlist$Site, high) & stlist$criteria != 1 
 
 
 stlist$criteria <- ifelse(stlist$suspended == FALSE | is.na(stlist$suspended), stlist$criteria, stlist$criteria + 1)
-stlist$criteria <- ifelse(stlist$totabs < 4 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
+stlist$criteria <- ifelse(stlist$totabs < 10 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
 
 
 #Write studentlist to the working directory ####
