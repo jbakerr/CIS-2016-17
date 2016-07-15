@@ -410,6 +410,8 @@ writeWorksheet(neal, subset(nohours, Home.School == "Neal Middle School"), "No H
 #writeWorksheet(neal, subset(badsetting, Home.School == "Neal Middle School"), "Setting - Tier Mismatches" )
 saveWorkbook(neal)
 
+data$improve <- ifelse(data$Student.ID %in% improve_criteria$Case.ID, data$improve <- TRUE, data$improve <- FALSE)
+
 
 # Write the cleaned / flagged data ####
 attach(data)
@@ -624,7 +626,71 @@ stlist <- stlist[!is.na(stlist$Name), ]
 elem <- c("Glenn Elementary School", "Eno Valley Elementary", "EK Powe Elementary School", "YE Smith Elementary")
 high <- c("Neal Middle School", "Durham Performance Learning Center", "Hillside High School", "Southern High School", "Northern")
 
+
+
+
+stlist$`Q_1 criteria` <- 0
+stlist$`Q_2 criteria` <- 0
+stlist$`Q_3 criteria` <- 0
+stlist$`Q_4 criteria` <- 0
 stlist$criteria <- 0
+
+
+
+criteria_cats <- c(117:120)
+
+abs_cats <- 92:95
+
+susp_cats <- c(15,16,19,20,23,24,27,28)
+
+q1_subjects <- c(34,35,38)
+q2_subjects <- c(41,42,45)
+q3_subjects <- c(48,49,52)
+q4_subjects <- c(55,56,59)
+
+
+
+
+for(i in q1_subjects){
+ 
+    stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_1 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_1 criteria`+ 1, stlist$`Q_1 criteria`)
+     stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_1 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_1 criteria` + 1, stlist$`Q_1 criteria`)
+  
+}
+
+for(i in q2_subjects){
+ 
+    stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_2 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_2 criteria`+ 1, stlist$`Q_2 criteria`)
+     stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_2 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_2 criteria` + 1, stlist$`Q_2 criteria`)
+  
+}
+
+for(i in q3_subjects){
+ 
+    stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_3 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_3 criteria`+ 1, stlist$`Q_3 criteria`)
+     stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_3 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_3 criteria` + 1, stlist$`Q_3 criteria`)
+  
+}
+
+for(i in q4_subjects){
+ 
+    stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_4 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_4 criteria`+ 1, stlist$`Q_4 criteria`)
+     stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_4 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_4 criteria` + 1, stlist$`Q_4 criteria`)
+  
+}
+
+
+stlist$`Q_1 criteria` <- ifelse(stlist$`Q_1 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_1 OSS` == 0, stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1)
+stlist$`Q_2 criteria` <- ifelse(stlist$`Q_2 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_2 OSS` == 0, stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1)
+stlist$`Q_3 criteria` <- ifelse(stlist$`Q_3 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_3 OSS` == 0, stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1)
+stlist$`Q_4 criteria` <- ifelse(stlist$`Q_4 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_4 OSS` == 0, stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1)
+
+stlist$`Q_1 criteria` <- ifelse(stlist$totabs1 < 3 | is.na(stlist$totabs1), stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1)
+stlist$`Q_2 criteria` <- ifelse(stlist$totabs2 < 3 | is.na(stlist$totabs2), stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1)
+stlist$`Q_3 criteria` <- ifelse(stlist$totabs3 < 3 | is.na(stlist$totabs3), stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1)
+stlist$`Q_4 criteria` <- ifelse(stlist$totabs4 < 3 | is.na(stlist$totabs4), stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1)
+
+
 
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & (stlist$`Lang. Arts` <= 2 & !is.na(stlist$`Lang. Arts`)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & stlist$criteria != 1 & (stlist$Math <= 2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
@@ -640,10 +706,18 @@ stlist$criteria <- ifelse(stlist$suspended == FALSE | is.na(stlist$suspended), s
 stlist$criteria <- ifelse(stlist$totabs < 10 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
 
 
+eligible <- subset(stlist, stlist$`Q_1 criteria` > 0 | (stlist$`Q_1 criteria` == 0 & stlist$`Q_2 criteria` > 0) | (stlist$`Q_1 criteria` == 0 & stlist$`Q_2 criteria` == 0 & stlist$`Q_3 criteria` > 0))
+
+improve_criteria <- subset(eligible, (eligible$`Q_3 criteria` == 0 & eligible$`Q_4 criteria` == 0) | eligible$`Q_4 criteria` == 0)
+#improve_criteria <- subset(improve_criteria, improve_criteria$Case.Status == "Active")
+
+write.csv(improve_criteria, "improve criteria.csv")
+
 #Write studentlist to the working directory ####
 unlink("studentlist.csv", recursive = FALSE, force = FALSE)
 
 write.csv(stlist, "studentlist.csv")
+
 
 
 
