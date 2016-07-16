@@ -87,7 +87,7 @@ data$setting <- NA
 data$setting[data$Recorded.As == "Group Setting" & data$Tier == "Tier II" ] <- "Group Setting"
 data$setting[data$Recorded.As == "Individual" & data$Tier == "Tier III" ] <- "Individual"
 data$setting[data$Recorded.As == "Tier I"] <- "Tier I"
-
+data$setting[data$Student.Support.Name == "Progress Monitoring/Adjustment"] <- "Individual"
 badsetting <- data[data$flag.tier3group | data$flag.tier2indiv, ]
 
 #Creating groupsize, hoursspent, individual, group, check-ins, parent contacts  etc. ####
@@ -208,6 +208,8 @@ writeWorksheet(SERV,toomanyhours,"Too many ind. hours full")
 #writeWorksheet(SERV, baddates, "Diff. Begin-End Dates Sum")
 createSheet(SERV, "Setting - Tier Mismatches")
 writeWorksheet(SERV, badsetting, "Setting - Tier Mismatches" )
+createSheet(SERV, "No Hours")
+writeWorksheet(SERV, nohours, "No Hours")
 saveWorkbook(SERV)
 
 
@@ -217,6 +219,8 @@ createSheet(hillside, "No Service Provider")
 writeWorksheet(hillside, subset(noprovider, Home.School == "Hillside High School"), "No Service Provider")
 createSheet(hillside, "No Support")
 writeWorksheet(hillside, subset(nosupport, Home.School == "Hillside High School"), "No Support")
+createSheet(hillside, "No Hours")
+writeWorksheet(hillside, subset(nohours, Home.School == "Hillside High School"), "No Hours")
 #createSheet(hillside, "Individual as Batch")
 #writeWorksheet(hillside, subset(indivbatch, Home.School == "Hillside High School"), "Individual as Batch")
 #createSheet(hillside, "Individual as Batch Summary")
@@ -237,6 +241,8 @@ createSheet(plc, "No Service Provider")
 writeWorksheet(plc, subset(noprovider, Home.School == "Durham Performance Learning Center"), "No Service Provider")
 createSheet(plc, "No Support")
 writeWorksheet(plc, subset(nosupport, Home.School == "Durham Performance Learning Center"), "No Support")
+createSheet(plc, "No Hours")
+writeWorksheet(plc, subset(nohours, Home.School == "Durham Performance Learning Center"), "No Hours")
 #createSheet(plc, "Individual as Batch")
 #writeWorksheet(plc, subset(indivbatch, Home.School == "Durham Performance Learning Center"), "Individual as Batch")
 #createSheet(plc, "Individual as Batch Summary")
@@ -257,6 +263,8 @@ createSheet(eno, "No Service Provider")
 writeWorksheet(eno, subset(noprovider, Home.School == "Eno Valley Elementary"), "No Service Provider")
 createSheet(eno, "No Support")
 writeWorksheet(eno, subset(nosupport, Home.School == "Eno Valley Elementary"), "No Support")
+createSheet(eno, "No Hours")
+writeWorksheet(eno, subset(nohours, Home.School == "Eno Valley Elementary"), "No Hours")
 #createSheet(eno, "Individual as Batch")
 ##writeWorksheet(eno, subset(indivbatch, Home.School == "Eno Valley Elementary"), "Individual as Batch")
 #createSheet(eno, "Individual as Batch Summary")
@@ -275,6 +283,8 @@ createSheet(ye, "No Service Provider")
 writeWorksheet(ye, subset(noprovider, Home.School == "YE Smith Elementary"), "No Service Provider")
 createSheet(ye, "No Support")
 writeWorksheet(ye, subset(nosupport, Home.School == "YE Smith Elementary"), "No Support")
+createSheet(ye, "No Hours")
+writeWorksheet(ye, subset(nohours, Home.School == "YE Smith Elementary"), "No Hours")
 #createSheet(ye, "Individual as Batch")
 #writeWorksheet(ye, subset(indivbatch, Home.School == "YE Smith Elementary"), "Individual as Batch")
 #createSheet(ye, "Individual as Batch Summary")
@@ -296,6 +306,8 @@ createSheet(ek, "No Service Provider")
 writeWorksheet(ek, subset(noprovider, Home.School == "EK Powe Elementary School"), "No Service Provider")
 createSheet(ek, "No Support")
 writeWorksheet(ek, subset(nosupport, Home.School == "EK Powe Elementary School"), "No Support")
+createSheet(ek, "No Hours")
+writeWorksheet(ek, subset(nohours, Home.School == "EK Powe Elementary School"), "No Hours")
 #createSheet(ek, "Individual as Batch")
 #writeWorksheet(ek, subset(indivbatch, Home.School == "EK Powe Elementary School"), "Individual as Batch")
 ##createSheet(ek, "Individual as Batch Summary")
@@ -316,6 +328,8 @@ createSheet(glenn, "No Service Provider")
 writeWorksheet(glenn, subset(noprovider, Home.School == "Glenn Elementary School"), "No Service Provider")
 createSheet(glenn, "No Support")
 writeWorksheet(glenn, subset(nosupport, Home.School == "Glenn Elementary School"), "No Support")
+createSheet(glenn, "No Hours")
+writeWorksheet(glenn, subset(nohours, Home.School == "Glenn Elementary School"), "No Hours")
 #createSheet(glenn, "Individual as Batch")
 #writeWorksheet(glenn, subset(indivbatch, Home.School == "Glenn Elementary School"), "Individual as Batch")
 #createSheet(glenn, "Individual as Batch Summary")
@@ -336,6 +350,8 @@ createSheet(northern, "No Service Provider")
 writeWorksheet(northern, subset(noprovider, Home.School == "Northern"), "No Service Provider")
 createSheet(northern, "No Support")
 writeWorksheet(northern, subset(nosupport, Home.School == "Northern"), "No Support")
+createSheet(northern, "No Hours")
+writeWorksheet(northern, subset(nohours, Home.School == "Northern"), "No Hours")
 #createSheet(northern, "Individual as Batch")
 #writeWorksheet(northern, subset(indivbatch, Home.School == "Northern"), "Individual as Batch")
 #createSheet(northern, "Individual as Batch Summary")
@@ -356,6 +372,8 @@ createSheet(southern, "No Service Provider")
 writeWorksheet(southern, subset(noprovider, Home.School == "Southern High School"), "No Service Provider")
 createSheet(southern, "No Support")
 writeWorksheet(southern, subset(nosupport, Home.School == "Southern High School"), "No Support")
+createSheet(southern, "No Hours")
+writeWorksheet(southern, subset(nohours, Home.School == "Southern High School"), "No Hours")
 #createSheet(southern, "Individual as Batch")
 #writeWorksheet(southern, subset(indivbatch, Home.School == "Southern High School"), "Individual as Batch")
 #createSheet(southern, "Individual as Batch Summary")
@@ -376,6 +394,8 @@ createSheet(neal, "No Service Provider")
 writeWorksheet(neal, subset(noprovider, Home.School == "Neal Middle School"), "No Service Provider")
 createSheet(neal, "No Support")
 writeWorksheet(neal, subset(nosupport, Home.School == "Neal Middle School"), "No Support")
+createSheet(neal, "No Hours")
+writeWorksheet(neal, subset(nohours, Home.School == "Neal Middle School"), "No Hours")
 #createSheet(neal, "Individual as Batch")
 #writeWorksheet(neal, subset(indivbatch, Home.School == "Neal Middle School"), "Individual as Batch")
 #createSheet(neal, "Individual as Batch Summary")
@@ -389,6 +409,8 @@ writeWorksheet(neal, subset(nosupport, Home.School == "Neal Middle School"), "No
 #createSheet(neal, "Setting - Tier Mismatches")
 #writeWorksheet(neal, subset(badsetting, Home.School == "Neal Middle School"), "Setting - Tier Mismatches" )
 saveWorkbook(neal)
+
+data$improve <- ifelse(data$Student.ID %in% improve_criteria$Case.ID, data$improve <- TRUE, data$improve <- FALSE)
 
 
 # Write the cleaned / flagged data ####
@@ -536,6 +558,8 @@ stlist$avgrade <- rowMeans(stlist[, colnames(stlist) %in% c("avgrade1", "avgrade
 stlist$nogrades <- is.na(stlist$avgrade)
 stlist$nogrades1 <- is.na(stlist$avgrade1)
 stlist$nogrades2 <- is.na(stlist$avgrade2)
+stlist$nogrades3 <- is.na(stlist$avgrade3)
+stlist$nogrades4 <- is.na(stlist$avgrade4)
 
 #These are average grades in each subject. Science is made by taking the mean of every column that contains the text "Science". Google "regular expressions r" for more info on grep.
 stlist$Science <- rowMeans(stlist[, grep("Science", colnames(stlist))], na.rm = T)
@@ -565,7 +589,8 @@ stlist$totabs <- rowSums(cbind(stlist[, colnames(stlist) %in% c("totabs1", "tota
 stlist$noabs <- is.na(stlist$totabs)
 stlist$noabs1 <- is.na(stlist$totabs1)
 stlist$noabs2 <- is.na(stlist$totabs2)
-
+stlist$noabs3 <- is.na(stlist$totabs3)
+stlist$noabs4 <- is.na(stlist$totabs4)
 
 stlist[,grep("(ISS)|(OSS)", colnames(stlist))][is.na(stlist[, grep("(ISS)|(OSS)", colnames(stlist))])] <- 0
 stlist$suspended <- rowSums(stlist[, grep("(ISS)|(OSS)", colnames(stlist))]) > 0
@@ -574,7 +599,7 @@ stlist$suspended <- as.numeric(stlist$suspended)
 
 # Adding service aggregates to student list
 stserv <- data %>% group_by(Student.ID) %>% summarize(Hours = sum(Hours), HoursSpent = sum(hoursspent), individual = sum(individual), group = sum(group), tier1 = sum(tier1), 
-                                                      checkin = sum(checkin), parent1on1 = sum(parent1on1), anyfamily = sum(anyfamily), num_serv = length(Student.ID) )
+                                                      checkin = sum(checkin), parent1on1 = sum(parent1on1), anyfamily = sum(anyfamily), num_serv = length(Student.ID), service_date = tail(End.Date, n =1) )
 checkcounts <- data[data$checkin != 0 , ] %>% group_by(Student.ID) %>% summarize(num_check = n())
 parentcounts <- data[data$parent1on1 != 0, ] %>% group_by(Student.ID) %>% summarize(num_parent1on1 = n())
 anyfamcounts <- data[data$anyfamily != 0, ] %>% group_by(Student.ID) %>% summarize(num_anyfamily = n())
@@ -601,12 +626,76 @@ stlist <- stlist[!is.na(stlist$Name), ]
 elem <- c("Glenn Elementary School", "Eno Valley Elementary", "EK Powe Elementary School", "YE Smith Elementary")
 high <- c("Neal Middle School", "Durham Performance Learning Center", "Hillside High School", "Southern High School", "Northern")
 
+
+
+
+stlist$`Q_1 criteria` <- 0
+stlist$`Q_2 criteria` <- 0
+stlist$`Q_3 criteria` <- 0
+stlist$`Q_4 criteria` <- 0
 stlist$criteria <- 0
+
+
+
+criteria_cats <- c(117:120)
+
+abs_cats <- 92:95
+
+susp_cats <- c(15,16,19,20,23,24,27,28)
+
+q1_subjects <- c(34,35,38)
+q2_subjects <- c(41,42,45)
+q3_subjects <- c(48,49,52)
+q4_subjects <- c(55,56,59)
+
+
+
+
+for(i in q1_subjects){
+ 
+    stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_1 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_1 criteria`+ 1, stlist$`Q_1 criteria`)
+     stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_1 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_1 criteria` + 1, stlist$`Q_1 criteria`)
+  
+}
+
+for(i in q2_subjects){
+ 
+    stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_2 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_2 criteria`+ 1, stlist$`Q_2 criteria`)
+     stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_2 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_2 criteria` + 1, stlist$`Q_2 criteria`)
+  
+}
+
+for(i in q3_subjects){
+ 
+    stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_3 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_3 criteria`+ 1, stlist$`Q_3 criteria`)
+     stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_3 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_3 criteria` + 1, stlist$`Q_3 criteria`)
+  
+}
+
+for(i in q4_subjects){
+ 
+    stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_4 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_4 criteria`+ 1, stlist$`Q_4 criteria`)
+     stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_4 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_4 criteria` + 1, stlist$`Q_4 criteria`)
+  
+}
+
+
+stlist$`Q_1 criteria` <- ifelse(stlist$`Q_1 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_1 OSS` == 0, stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1)
+stlist$`Q_2 criteria` <- ifelse(stlist$`Q_2 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_2 OSS` == 0, stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1)
+stlist$`Q_3 criteria` <- ifelse(stlist$`Q_3 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_3 OSS` == 0, stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1)
+stlist$`Q_4 criteria` <- ifelse(stlist$`Q_4 ISS` == 0 | is.na(stlist$suspended) | stlist$`Q_4 OSS` == 0, stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1)
+
+stlist$`Q_1 criteria` <- ifelse(stlist$totabs1 < 3 | is.na(stlist$totabs1), stlist$`Q_1 criteria`, stlist$`Q_1 criteria` + 1)
+stlist$`Q_2 criteria` <- ifelse(stlist$totabs2 < 3 | is.na(stlist$totabs2), stlist$`Q_2 criteria`, stlist$`Q_2 criteria` + 1)
+stlist$`Q_3 criteria` <- ifelse(stlist$totabs3 < 3 | is.na(stlist$totabs3), stlist$`Q_3 criteria`, stlist$`Q_3 criteria` + 1)
+stlist$`Q_4 criteria` <- ifelse(stlist$totabs4 < 3 | is.na(stlist$totabs4), stlist$`Q_4 criteria`, stlist$`Q_4 criteria` + 1)
+
+
 
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & (stlist$`Lang. Arts` <= 2 & !is.na(stlist$`Lang. Arts`)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & stlist$criteria != 1 & (stlist$Math <= 2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & stlist$criteria != 1 & (stlist$Science <= 2 & !is.na(stlist$Science)), stlist$criteria + 1, stlist$criteria)
-stlist$criteria <- ifelse(stlist$Site == "YE Smith Elementary" & (stlist$Writing <=2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
+stlist$criteria <- ifelse(stlist$Site == "YE Smith Elementary" & (stlist$criteria != 1 & (stlist$Writing <=2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
 
 stlist$criteria <-  ifelse(is.element(stlist$Site, high) & (stlist$`Lang. Arts` < 70 & !is.na(stlist$`Lang. Arts`)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, high) & stlist$criteria != 1 & (stlist$Math < 70 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
@@ -614,12 +703,21 @@ stlist$criteria <-  ifelse(is.element(stlist$Site, high) & stlist$criteria != 1 
 
 
 stlist$criteria <- ifelse(stlist$suspended == FALSE | is.na(stlist$suspended), stlist$criteria, stlist$criteria + 1)
-stlist$criteria <- ifelse(stlist$totabs < 4 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
+stlist$criteria <- ifelse(stlist$totabs < 10 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
+
+
+eligible <- subset(stlist, stlist$`Q_1 criteria` > 0 | (stlist$`Q_1 criteria` == 0 & stlist$`Q_2 criteria` > 0) | (stlist$`Q_1 criteria` == 0 & stlist$`Q_2 criteria` == 0 & stlist$`Q_3 criteria` > 0))
+
+improve_criteria <- subset(eligible, (eligible$`Q_3 criteria` == 0 & eligible$`Q_4 criteria` == 0) | eligible$`Q_4 criteria` == 0)
+#improve_criteria <- subset(improve_criteria, improve_criteria$Case.Status == "Active")
+
+write.csv(improve_criteria, "improve criteria.csv")
 
 #Write studentlist to the working directory ####
 unlink("studentlist.csv", recursive = FALSE, force = FALSE)
 
 write.csv(stlist, "studentlist.csv")
+
 
 
 
