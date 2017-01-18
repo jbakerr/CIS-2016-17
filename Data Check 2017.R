@@ -19,12 +19,10 @@ if(file.exists(macdatawd)){
   }
 }
 
-
-
 # This is the name I have been using for the detailed service dataset, however we may want to start using a different naming convention
 # This is the "Tier II and III Support Detail" report. 
 # **** IMPORTANT ***** delete the last row that sums all hours before saving the excel file. That row will cause problems
-data<-readWorksheetFromFile('ServiceD1516.xls', sheet=1, header = T, startRow = 5)
+data<-readWorksheetFromFile('ServiceD.xlsx', sheet=1, header = T, startRow = 2)
 colnames(data)[1] <- "Student.ID"
 data <- data[!is.na(data$Student.ID), ] # get rid of accidental blank rows
 data <- data[as.Date(data$Begin.Date) > as.Date("8aug2015","%d%b%Y"), ] #get rid of services before school year
