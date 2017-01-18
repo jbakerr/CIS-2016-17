@@ -9,8 +9,8 @@ library(XLConnect)
 ###################################      SERVICES DATA CHECK      ##########################################
 # Set the working directory to the local folder containing dataset. Can be done manually
 # by going to Session -> Set Working Directory -> Choose Directory 
-macdatawd <- "~/Dropbox/CIS Data"
-windowsdatawd <- "C:/Users/USER/Dropbox/CIS Data"
+macdatawd <- "~/Google Drive/Data Files"
+windowsdatawd <- "C:/Users/USER/Google Drive/Data Files"
 if(file.exists(macdatawd)){
   setwd(file.path(macdatawd))
 } else { 
