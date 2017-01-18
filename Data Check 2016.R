@@ -15,7 +15,7 @@ if(file.exists(macdatawd)){
 } else { 
   if(file.exists(windowsdatawd)){
     setwd(file.path(windowsdatawd))
-}
+  }
 }
 
 
@@ -165,30 +165,30 @@ if(file.exists(mac_datacheck)){
 
 # File management within dropbox
 if(file.exists(mac_datacheck)){
-oldfiles <- c("~/Dropbox/Data Checks/Old")
-movefiles <- list.files(path = "~/Dropbox/Data Checks/", pattern =".xlsx", all.files = FALSE, recursive = FALSE, include.dirs = FALSE)
-file.copy(from=movefiles, to=oldfiles, 
-         overwrite = FALSE, recursive = FALSE, 
-        copy.mode = TRUE)
-file.remove(movefiles, recursive = FALSE)
-} else {
-  if(file.exists(windows_datacheck)) { 
-  oldfiles <- c("C:/Users/USER/Dropbox/Data Checks/Old")
-  movefiles <- list.files(path = "C:/Users/USER/Dropbox/Data Checks/", pattern =".xlsx", all.files = FALSE, recursive = FALSE, include.dirs = FALSE)
+  oldfiles <- c("~/Dropbox/Data Checks/Old")
+  movefiles <- list.files(path = "~/Dropbox/Data Checks/", pattern =".xlsx", all.files = FALSE, recursive = FALSE, include.dirs = FALSE)
   file.copy(from=movefiles, to=oldfiles, 
             overwrite = FALSE, recursive = FALSE, 
             copy.mode = TRUE)
   file.remove(movefiles, recursive = FALSE)
+} else {
+  if(file.exists(windows_datacheck)) { 
+    oldfiles <- c("C:/Users/USER/Dropbox/Data Checks/Old")
+    movefiles <- list.files(path = "C:/Users/USER/Dropbox/Data Checks/", pattern =".xlsx", all.files = FALSE, recursive = FALSE, include.dirs = FALSE)
+    file.copy(from=movefiles, to=oldfiles, 
+              overwrite = FALSE, recursive = FALSE, 
+              copy.mode = TRUE)
+    file.remove(movefiles, recursive = FALSE)
   }
-  }
+}
 
 
-#schools <- unique(data$Home.School)
+schools <- unique(data$Home.School)
 
 #for (i in schools){
 # print(i)} 
 #
-  
+
 
 # write datasets of problem issues for all schools to an excel spreadsheet ####
 SERV<-loadWorkbook (paste("Data Check ", as.character(Sys.Date()),".xlsx") , create = TRUE )
@@ -652,30 +652,30 @@ q4_subjects <- c(55,56,59)
 
 
 for(i in q1_subjects){
- 
-    stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_1 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_1 criteria`+ 1, stlist$`Q_1 criteria`)
-     stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_1 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_1 criteria` + 1, stlist$`Q_1 criteria`)
+  
+  stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_1 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_1 criteria`+ 1, stlist$`Q_1 criteria`)
+  stlist$`Q_1 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_1 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_1 criteria` + 1, stlist$`Q_1 criteria`)
   
 }
 
 for(i in q2_subjects){
- 
-    stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_2 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_2 criteria`+ 1, stlist$`Q_2 criteria`)
-     stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_2 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_2 criteria` + 1, stlist$`Q_2 criteria`)
+  
+  stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_2 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_2 criteria`+ 1, stlist$`Q_2 criteria`)
+  stlist$`Q_2 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_2 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_2 criteria` + 1, stlist$`Q_2 criteria`)
   
 }
 
 for(i in q3_subjects){
- 
-    stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_3 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_3 criteria`+ 1, stlist$`Q_3 criteria`)
-     stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_3 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_3 criteria` + 1, stlist$`Q_3 criteria`)
+  
+  stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_3 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_3 criteria`+ 1, stlist$`Q_3 criteria`)
+  stlist$`Q_3 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_3 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_3 criteria` + 1, stlist$`Q_3 criteria`)
   
 }
 
 for(i in q4_subjects){
- 
-    stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_4 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_4 criteria`+ 1, stlist$`Q_4 criteria`)
-     stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_4 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_4 criteria` + 1, stlist$`Q_4 criteria`)
+  
+  stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, elem) & stlist$`Q_4 criteria` != 1 & (stlist[,i] <= 2 & !is.na(stlist[,i])), stlist$`Q_4 criteria`+ 1, stlist$`Q_4 criteria`)
+  stlist$`Q_4 criteria` <- ifelse(is.element(stlist$Site, high) & stlist$`Q_4 criteria` != 1 & (stlist[,i] < 70 & !is.na(stlist[,i])), stlist$`Q_4 criteria` + 1, stlist$`Q_4 criteria`)
   
 }
 
@@ -695,7 +695,7 @@ stlist$`Q_4 criteria` <- ifelse(stlist$totabs4 < 3 | is.na(stlist$totabs4), stli
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & (stlist$`Lang. Arts` <= 2 & !is.na(stlist$`Lang. Arts`)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & stlist$criteria != 1 & (stlist$Math <= 2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, elem) & stlist$criteria != 1 & (stlist$Science <= 2 & !is.na(stlist$Science)), stlist$criteria + 1, stlist$criteria)
-stlist$criteria <- ifelse(stlist$Site == "YE Smith Elementary" & (stlist$criteria != 1 & (stlist$Writing <=2 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
+stlist$criteria <- ifelse(stlist$Site == "YE Smith Elementary" & (stlist$criteria != 1 & (stlist$Writing <=2 & !is.na(stlist$Math))), stlist$criteria + 1, stlist$criteria)
 
 stlist$criteria <-  ifelse(is.element(stlist$Site, high) & (stlist$`Lang. Arts` < 70 & !is.na(stlist$`Lang. Arts`)), stlist$criteria + 1, stlist$criteria)
 stlist$criteria <-  ifelse(is.element(stlist$Site, high) & stlist$criteria != 1 & (stlist$Math < 70 & !is.na(stlist$Math)), stlist$criteria + 1, stlist$criteria)
@@ -706,10 +706,70 @@ stlist$criteria <- ifelse(stlist$suspended == FALSE | is.na(stlist$suspended), s
 stlist$criteria <- ifelse(stlist$totabs < 10 | is.na(stlist$totabs), stlist$criteria, stlist$criteria + 1)
 
 
-eligible <- subset(stlist, stlist$`Q_1 criteria` > 0 | (stlist$`Q_1 criteria` == 0 & stlist$`Q_2 criteria` > 0) | (stlist$`Q_1 criteria` == 0 & stlist$`Q_2 criteria` == 0 & stlist$`Q_3 criteria` > 0))
+eligible <- subset(stlist, stlist$`Q_1 criteria` > 0 |  stlist$`Q_2 criteria` > 0 | stlist$`Q_3 criteria` > 0 |  stlist$`Q_4 criteria` > 0)
+eligible <- subset(eligible, (as.Date(eligible$X...Date.Inactivated) > as.Date("2016-05-20") & as.Date(eligible$CIS.Enroll.Date) < as.Date("2016-04-30")) | eligible$Case.Status == "Active")
 
 improve_criteria <- subset(eligible, (eligible$`Q_3 criteria` == 0 & eligible$`Q_4 criteria` == 0) | eligible$`Q_4 criteria` == 0)
-#improve_criteria <- subset(improve_criteria, improve_criteria$Case.Status == "Active")
+
+stlist$max_criteria <- pmax(stlist$`Q_1 criteria`, stlist$`Q_2 criteria`, stlist$`Q_3 criteria`, stlist$`Q_4 criteria`)
+
+
+
+improve.math <- subset(stlist, stlist$Site %in% high & (stlist$`Q_2 Math` - stlist$`Q_1 Math`) >= 10 | (stlist$`Q_4 Math` - stlist$`Q_3 Math`) >=10)
+improve.math <- subset(improve.math, !is.na(improve.math$Name))
+
+improve.elm.math <- subset(stlist, stlist$Site %in% elem & ((stlist$`Q_2 Math` - stlist$`Q_1 Math`) + (stlist$`Q_3 Math` - stlist$`Q_2 Math`) + (stlist$`Q_4 Math` - stlist$`Q_3 Math`) >= 1.0 ))
+improve.elm.math <- subset(improve.elm.math, !is.na(improve.elm.math$Name))
+
+improve.la <- subset(stlist, stlist$Site %in% high & (stlist$`Q_2 Lang. Arts` - stlist$`Q_1 Lang. Arts`) >= 10 | (stlist$`Q_4 Lang. Arts` - stlist$`Q_3 Lang. Arts`) >= 10)
+improve.la <- subset(improve.la, !is.na(improve.la$Name))
+
+improve.elm.la <- subset(stlist, stlist$Site %in% elem & (stlist$`Q_2 Lang. Arts` - stlist$`Q_1 Lang. Arts`) + (stlist$`Q_3 Lang. Arts` - stlist$`Q_2 Lang. Arts`) + (stlist$`Q_4 Lang. Arts` - stlist$`Q_3 Lang. Arts`) >= 1.0 )
+improve.elm.la <- subset(improve.elm.la, !is.na(improve.elm.la$Name))
+
+improve.science <- subset(stlist, stlist$Site %in% high & (stlist$`Q_2 Science` - stlist$`Q_1 Science`) >= 10 | (stlist$`Q_4 Science` - stlist$`Q_3 Science`) >= 10)
+improve.science <- subset(improve.science, !is.na(improve.science$Name))
+
+improve.elm.science <- subset(stlist, stlist$Site %in% elem & (stlist$`Q_2 Science` - stlist$`Q_1 Science`) + (stlist$`Q_3 Science` - stlist$`Q_2 Science`) +  (stlist$`Q_4 Science` - stlist$`Q_3 Science`) >= 1.0 ) 
+improve.elm.science <- subset(improve.elm.science, !is.na(improve.elm.science$Name))
+
+
+improve.elem.attend <- subset(stlist, stlist$Site %in% elem  & ((stlist$totabs1 - stlist$totabs2) + (stlist$totabs2 - stlist$totabs3) + (stlist$totabs3 - stlist$totabs4) >= 3))
+improve.elem.attend <- subset(improve.elem.attend, !is.na(improve.elem.attend$Name))
+elem.attend.eligible <- subset(stlist, stlist$Site %in% elem  &  (stlist$totabs1 > 3 | stlist$totabs2 > 3 | stlist$totabs3 > 3 | stlist$totabs4 > 3))
+
+improve.high.attend <- subset(stlist, stlist$Site %in% high & ((stlist$totabs1 - stlist$totabs2) + (stlist$totabs2 - stlist$totabs3) + (stlist$totabs3 - stlist$totabs4) >= 8))
+improve.high.attend <- subset(improve.high.attend, !is.na(improve.high.attend$Name))
+high.attend.eligible <- subset(stlist, stlist$Site %in% high  &  (stlist$totabs1 > 5 | stlist$totabs2 > 5 | stlist$totabs3 > 5 | stlist$totabs4 > 5))
+
+
+improve.grades <- merge(improve.la, improve.science, all = TRUE)
+improve.grades <- merge(improve.grades, improve.math, all= T)
+improve.grades <- merge(improve.grades, improve.elm.science, all = T)
+improve.grades <- merge(improve.grades, improve.elm.la, all = T)
+improve.grades <- merge(improve.grades, improve.elm.math, all = T)
+improve.grades$improve.grades <- TRUE
+
+improve.attend <- merge(improve.high.attend, improve.elem.attend, all = T)
+improve.attend$attned <- TRUE
+
+improve <- merge(improve.grades,improve.attend, all = T)
+
+write.csv(improve, "improve.csv")
+
+
+
+
+
+
+stlist$improve_criteria <- ifelse(stlist$Case.ID %in% improve_criteria$Case.ID, stlist$improve_criteria <- TRUE, FALSE)
+stlist$improve_grades <- ifelse(stlist$Case.ID %in% improve.grades$Case.ID, stlist$improve_grades <- TRUE, FALSE)
+stlist$improve_attend <- ifelse(stlist$Case.ID %in% improve.attend$Case.ID, stlist$improve_attend <- TRUE, FALSE)
+
+stlist$avg.duration <- stlist$Hours / stlist$num_serv
+
+stlist.save <- stlist
+stlist <- stlist.save
 
 write.csv(improve_criteria, "improve criteria.csv")
 
@@ -718,6 +778,5 @@ unlink("studentlist.csv", recursive = FALSE, force = FALSE)
 
 write.csv(stlist, "studentlist.csv")
 
-
-
-
+stlist$totabs4[stlist$Site == "Hillside High School"] <- stlist$totabs4[stlist$Site == "Hillside High School"] + 5
+mean(ifelse(subset(stlist$totabs4, stlist$Site == "Hillside High School"), subset(stlist$totabs4, stlist$Site == "Hillside High School" ) + 0, ), na.rm = T)
