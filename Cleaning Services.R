@@ -41,18 +41,8 @@ drops <- c("Provider.Type.2","Provider.Name.2", "Provider.Type.3", "Provider.Nam
 data <- data[, ! (names(data) %in% drops)]
 
 
-#Chancing Name format to Fist Name Last Name 
-data$Student <- strsplit(data$Student, ", ")
-
-data$Student <- unlist(lapply(names, 
-                              function(x) paste(x[1:length(x) %% 2 == 0], 
-                                                x[1:length(x) %% 2 != 0])))
-data$Student <- trimws(data$Student)
-
-# 
-# 
-# d <- data %>% group_by(Home.School, Entry.Date, Support.Date, Provider.Type.1, Provider.Name.1, Individual.or.Group, Student.Support.Category, 
-#                        Hours, Tier, Notes) %>% summarize(groupsize = n())
+d <- data %>% group_by(Home.School, Entry.Date, Support.Date, Provider.Type.1, Activity, Student.Support.Category, 
+                       Hours, Tier) %>% summarize(groupsize = n())
 # d$groupsize[(!is.na(d$Individual.or.Group)) & d$Individual.or.Group == "Individual"] <- 1
 # 
 # data_test <- merge(data, d, by = c("Home.School", "Entry.Date", "Support.Date", "Provider.Type.1", "Provider.Name.1", "Individual.or.Group", "Student.Support.Category", 

@@ -6,7 +6,7 @@ library(plyr) # ****IMPORTANT**** Load plyr before dplyr- they have some of the 
 library(dplyr)
 library(tidyr)
 library(XLConnect)
-###################################      SERVICES DATA CHECK      ##########################################
+###################################      Generating Student List      ##########################################
 # Set the working directory to the local folder containing dataset. Can be done manually
 # by going to Session -> Set Working Directory -> Choose Directory 
 macdatawd <- "~/Google Drive/Data Files"
@@ -89,7 +89,7 @@ progress$Q1[progress$Metric == "Attendance Rate" & !is.na(progress$Q1) & (progre
 
 
 progress <- gather(progress, Period, Value, Baseline:Q1, factor_key = T)
-quartersubject <- paste(progress$Period, " ", progress$Metric, sep = " ")
+quartersubject <- paste(progress$Period, "_", progress$Metric, sep = "")
 progress$quartersubject <- quartersubject
 progress$Period <- NULL
 
@@ -105,10 +105,42 @@ progress <- progress[!duplicated(progress[,c("School", "Student.Name","Metric", 
 progress <- spread(progress[, ! colnames(progress) %in% c("Metric", "Period")], quartersubject, Value)
 
 
-#Saving Data 
 
 
 
+#Adding Caselist 
+
+caselist<-readWorksheetFromFile('caselist.xlsx', sheet=1, header = T, startRow = 2)
+
+
+
+
+progress <- merge(caselist, progress, by = c("Student.ID","School"), all.x = T, all.y = T)
+
+progress$Student.Name <- NULL 
+
+
+
+#Adding Birth days
+
+
+age_years <- function(earlier, later)
+{
+  lt <- data.frame(earlier, later)
+  age <- as.numeric(format(lt[,2],format="%Y")) - as.numeric(format(lt[,1],format="%Y"))
+  
+  dayOnLaterYear <- ifelse(format(lt[,1],format="%m-%d")!="02-29",
+                           as.Date(paste(format(lt[,2],format="%Y"),"-",format(lt[,1],format="%m-%d"),sep="")),
+                           ifelse(as.numeric(format(later,format="%Y")) %% 400 == 0 | as.numeric(format(later,format="%Y")) %% 100 != 0 & as.numeric(format(later,format="%Y")) %% 4 == 0,
+                                  as.Date(paste(format(lt[,2],format="%Y"),"-",format(lt[,1],format="%m-%d"),sep="")),
+                                  as.Date(paste(format(lt[,2],format="%Y"),"-","02-28",sep=""))))
+  
+  age[which(dayOnLaterYear > lt$later)] <- age[which(dayOnLaterYear > lt$later)] - 1
+  
+  age
+}
+
+progress$age <- age_years(stlist$Birth.Date, Sys.Date())
 
 
 

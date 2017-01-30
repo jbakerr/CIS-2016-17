@@ -25,6 +25,113 @@ if(file.exists(macdatawd)){
 data<-readWorksheetFromFile('ServiceD.xlsx', sheet=1, header = T, startRow = 2)
 colnames(data)[1] <- "Student.ID"
 data <- data[!is.na(data$Student.ID), ] # get rid of accidental blank rows
+
+
+#removing Nina's test data
+data <- subset(data, !data$Entered.By == "nina")
+
+
+
+
+
+#Progress Monitoring
+
+#Load Worksheet
+progress<-readWorksheetFromFile('Progress-Monitoring.xlsx', sheet=1, header = T, startRow = 1)
+
+#Rename Grading Quarters
+colnames(progress)[7:9] <- c("Q1", "Q2", "Q3")
+#Removing Test Data
+progress <- subset(progress, !progress$Case.Manager == "Nina Wilson")
+
+#Changing Metric Title
+progress$Metric[progress$Metric =='Core Course Grades: Eng/Lang Arts/Reading/Writing'] <- "ELA"
+
+progress$Metric[progress$Metric =='Core Course Grades: Math 1'] <- "Math"
+
+progress$Metric[progress$Metric =='Core Course Grades: Science'] <- "Science"
+
+progress$Metric[progress$Metric =='Standardized test score: English / Language Arts'] <- "ELA"
+
+progress$Metric[progress$Metric =='Standardized test score: Science'] <- "Science"
+
+
+
+
+
+metrics <- c("Math","Science","ELA", "Suspensions", "Attendance Rate")
+
+
+
+
+elem <- c("Glenn Elementary School", "Eno Valley Elementary", "EK Powe Elementary School", "YE Smith Elementary")
+high <- c("Neal Middle School", "Durham Performance Learning Center", "Hillside High School", "Southern High School", "Northern")
+
+#Adjusting Attendance Rate from days to percentage
+elem.adjust <- progress$Q1[progress$Metric == "Attendance Rate" & !is.na(progress$Q1) & (progress$School %in% elem) & progress$Q1 < 50]
+elem.adjust <- (45-elem.adjust)/100
+
+progress$Q1[progress$Metric == "Attendance Rate" & progress$School %in% elem & progress$Q1 < 50 & !is.na(progress$Q1)] <- elem.adjust
+
+high.adjust <- progress$Q1[progress$Metric == "Attendance Rate" & !is.na(progress$Q1) & (progress$School %in% high) & progress$Q1 < 1]
+high.adjust <- high.adjust *100
+
+progress$Q1[progress$Metric == "Attendance Rate" & !is.na(progress$Q1) & (progress$School %in% high) & progress$Q1 < 1] <- high.adjust
+
+summary(subset(progress$Q1, progress$Metric == "Attendance Rate" & progress$School %in% high))
+
+
+
+progress_short <- subset(progress, progress$Metric %in% metrics)
+
+progress_short <- progress_short[,1:7]
+progress_short <- progress_short[,-6]
+
+
+
+long_progress <- gather(progress_short, Period, Value, Baseline:Q1, factor_key = T)
+quartersubject <- paste(long_progress$Period, long_progress$Metric, sep = " ")
+long_progress$quartersubject <- quartersubject
+
+wide_progress <- spread(long_progress[, ! colnames(long_progress) %in% c("Metric", "Period")], quartersubject, Value)
+
+
+wide_progress <- spread(long_progress, Metric, Value)
+
+write.csv(wide_progress, "studentlist.csv")
+
+
+
+#Spreading
+quartersubject <- paste("Q_", substr(progress$Report.Period, 1,1), " ", grades$Outcome.Item, sep = "")
+quartersubjectgpa <- paste(grades$Outcome.Item," ",  "Q_",substr(grades$Report.Period, 1,1), sep = "")
+grades$quartersubject <- quartersubject
+grades$quartersubject[grades$Outcome.Item == "GPA"] <- quartersubjectgpa[grades$Outcome.Item == "GPA"]
+
+grades <- spread(grades[, ! colnames(grades) %in% c("Outcome.Item", "Report.Period")], quartersubject, Value)
+
+attend$quartersubject <- paste("Q_", substr(attend$Report.Period, 1,1), " ", attend$Outcome.Item, sep = "")
+attend <- spread(attend[, ! colnames(attend) %in% c("Outcome.Item", "Report.Period", "Date")], quartersubject, Value)
+
+
+
+
+#Flags
+
+# #Group / Tier Mismatch
+# data$flag <- FALSE
+# ifelse(subset(data, (data$Tier == "Tier II" & data$Individual.or.Group != "Group"), data$flag <- TRUE))
+#        
+# subset(data$flag, (data$Tier == "Tier II" & data$Individual.or.Group != "Group"))
+# 
+# data$flag <- TRUE
+# 
+#        
+#        | (data$Tier == "Tier III" & data$Individual.or.Group == "Group")
+# length(subset(data, (data$Tier == "Tier II" & data$Individual.or.Group != "Group")))
+#   
+
+
 #data <- data[as.Date(data$Begin.Date) > as.Date("8aug2015","%d%b%Y"), ] #get rid of services before school year
 #data[data$Tier == "Tier I", ]$Recorded.As <- "Group Setting"
 #data[data$Provider.Type == "Volunteer",]$Provider.Name <- "Volunteer"
